@@ -87,6 +87,14 @@ android {
         versionName "1.0"
     }
     signingConfigs {
+        release {
+            if (System.getenv("RN_UPLOAD_STORE_FILE")) {
+                storeFile file(System.getenv("RN_UPLOAD_STORE_FILE"))
+                storePassword System.getenv("RN_UPLOAD_STORE_PASSWORD")
+                keyAlias System.getenv("RN_UPLOAD_KEY_ALIAS")
+                keyPassword System.getenv("RN_UPLOAD_KEY_PASSWORD")
+            }
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -99,6 +107,8 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
+            shrinkResources enableProguardInReleaseBuilds
+
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
