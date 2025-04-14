@@ -4,7 +4,6 @@ const dark: Palette = {
   background: '#ff0000',
   primary: '#007BFF',
   secondary: '#6C757D',
-  accent: '#17A2B8',
   text: '#212529',
   card: '#FFFFFF',
   border: '#CED4DA',

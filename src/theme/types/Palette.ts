@@ -2,7 +2,7 @@ interface Palette {
   background: string;
   primary: string;
   secondary: string;
-  accent: string;
+  inactive: string;
   text: string;
   card: string;
   border: string;

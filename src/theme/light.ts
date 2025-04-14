@@ -2,12 +2,12 @@ import Palette from '@/theme/types/Palette';
 
 const light: Palette = {
   background: '#F3F5F6',
-  primary: '#1D1F1F',
-  secondary: '#C6CED1',
-  accent: '#17A2B8',
+  primary: '#0065FF',
+  secondary: '#767676',
+  inactive: '#C6CED1',
   text: '#1D1F1F',
-  card: '#FF0000',
-  border: '#FF0000',
+  card: '#FF0000', // TODO
+  border: '#FF0000', // TODO
   shadow: '#C6CED1',
 };
 

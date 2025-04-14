@@ -33,10 +33,9 @@ const RootStacks = () => {
       headerStyle: {
         backgroundColor: theme.background,
         shadowColor: 'transparent',
-        borderBottomColor: theme.secondary,
+        borderBottomColor: theme.inactive,
         borderBottomWidth: 1,
       },
-      headerTintColor: theme.accent,
       headerTitleAlign: 'left',
       headerTitleStyle: [typography.body, {color: theme.text}],
       headerLeftContainerStyle: {paddingLeft: 4},
