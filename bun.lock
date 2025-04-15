@@ -23,6 +23,7 @@
         "react-native-gifted-charts": "^1.4.59",
         "react-native-linear-gradient": "^2.8.3",
         "react-native-navigation-bar-color": "^2.0.2",
+        "react-native-progress": "^5.0.1",
         "react-native-reanimated": "^3.17.3",
         "react-native-safe-area-context": "^5.3.0",
         "react-native-screens": "^4.10.0",
@@ -1554,6 +1555,8 @@
     "react-native-linear-gradient": ["react-native-linear-gradient@2.8.3", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA=="],
 
     "react-native-navigation-bar-color": ["react-native-navigation-bar-color@2.0.2", "", {}, "sha512-ZmpLWRocyme1au11e5ZuecMS/UCi57nlzgnioi03Q6ERMbeUOqqbWgNBaNB7SsCeqBV6fZPjo3+A64zEIpzw4w=="],
+
+    "react-native-progress": ["react-native-progress@5.0.1", "", { "dependencies": { "prop-types": "^15.7.2" }, "peerDependencies": { "react-native-svg": "*" } }, "sha512-TYfJ4auAe5vubDma2yfFvt7ktSI+UCfysqJnkdHEcLXqAitRFOozgF/cLgN5VNi/iLdaf3ga1ETi2RF4jVZ/+g=="],
 
     "react-native-reanimated": ["react-native-reanimated@3.17.3", "", { "dependencies": { "@babel/plugin-transform-arrow-functions": "^7.0.0-0", "@babel/plugin-transform-class-properties": "^7.0.0-0", "@babel/plugin-transform-classes": "^7.0.0-0", "@babel/plugin-transform-nullish-coalescing-operator": "^7.0.0-0", "@babel/plugin-transform-optional-chaining": "^7.0.0-0", "@babel/plugin-transform-shorthand-properties": "^7.0.0-0", "@babel/plugin-transform-template-literals": "^7.0.0-0", "@babel/plugin-transform-unicode-regex": "^7.0.0-0", "@babel/preset-typescript": "^7.16.7", "convert-source-map": "^2.0.0", "invariant": "^2.2.4", "react-native-is-edge-to-edge": "1.1.7" }, "peerDependencies": { "@babel/core": "^7.0.0-0", "react": "*", "react-native": "*" } }, "sha512-0dN+AB7Om9Fdq3Bvq4+ClGhv2sl1o6BhKum18CFNPh4dgMKybDSdRo2vhxTaZUJq6R3LC8gFI84IV0qCZmPbiw=="],
 

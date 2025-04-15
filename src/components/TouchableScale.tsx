@@ -12,7 +12,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const TouchableScale = ({onPress, pressInDuration = 150, pressOutDuration = 150, scaleTo = 0.98, pressInEasing = Easing.elastic(1.5), pressOutEasing = Easing.elastic(1.5), style, children}: Props) => {
+const TouchableScale = ({onPress, pressInDuration = 150, pressOutDuration = 150, scaleTo = 0.95, pressInEasing = Easing.elastic(1.5), pressOutEasing = Easing.elastic(1.5), style, children, ...rest}: Props & {[key: string]: any}) => {
   const scale = new Animated.Value(1);
 
   const onPressIn = () => {
@@ -34,7 +34,7 @@ const TouchableScale = ({onPress, pressInDuration = 150, pressOutDuration = 150,
   };
 
   return (
-    <Animated.View style={{transform: [{scale}], ...style}} onTouchEnd={onPress}>
+    <Animated.View style={{transform: [{scale}], ...style}} onTouchEnd={onPress} {...rest}>
       <View onTouchStart={onPressIn} onTouchEnd={onPressOut} onTouchCancel={onPressOut}>
         {children}
       </View>

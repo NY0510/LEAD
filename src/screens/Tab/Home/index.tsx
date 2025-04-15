@@ -1,121 +1,54 @@
 import React from 'react';
-import {Dimensions, Text, View} from 'react-native';
-import {BarChart} from 'react-native-gifted-charts';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
+import * as Progress from 'react-native-progress';
 
+import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
+import {toDP} from '@/theme/typography';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const Home = () => {
   const {user, signOut} = useAuth();
   const {theme, typography} = useTheme();
 
-  const stackData = Array.from({length: 7}, (_, i) => ({
-    stacks: [
-      {value: Math.floor(Math.random() * 50) + 10, color: '#EE902C'},
-      {value: Math.floor(Math.random() * 50) + 10, color: '#344BFD'},
-    ],
-    label: ['월', '화', '수', '목', '금', '토', '일'][i],
-  }));
-
   return (
-    <View style={{flex: 1, alignItems: 'center', paddingHorizontal: 18}}>
-      {/* <Text style={[typography.title]}>홈 화면</Text>
-
-      <Text style={[typography.body]}>{user?.email}</Text>
-      <Text style={[typography.body]}>{user?.displayName}</Text>
-      <Text style={[typography.body]} onPress={signOut}>
-        로그아웃
-      </Text> */}
-
-      <View style={{backgroundColor: '#ffffff', borderRadius: 12, paddingHorizontal: 24, paddingVertical: 18, width: '100%', gap: 8}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-          <View>
-            <Text style={[typography.body, {color: theme.text}]}>이번주 평균</Text>
-            <Text style={[typography.title, {color: theme.text}]}>3시간 50분</Text>
+    <View style={{alignItems: 'center', padding: 26}}>
+      <View style={{gap: 22}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+          <View style={{flexWrap: 'wrap'}}>
+            <Text style={[typography.subtitle, {color: theme.primary, fontWeight: 600}]}>{user?.displayName}</Text>
+            <Text style={[typography.subtitle, {color: theme.text}]}>님의 하루를 LEAD가 응원할게요!</Text>
           </View>
-          <View style={{alignItems: 'flex-end'}}>
-            <Text style={[typography.body, {color: theme.text}]}>지난주보다</Text>
-            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>+1시간 30분</Text>
-          </View>
+          <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
         </View>
 
-        <BarChart
-          stackData={stackData.map(item => ({
-            ...item,
-            stacks: item.stacks.map((stack, index) => {
-              if (index === 0) {
-                return {...stack, borderRadius: 0};
-              }
-              if (index === 1) {
-                // return {...stack, marginBottom: 1};
-              }
-              return stack;
-            }),
-          }))}
-          barBorderTopLeftRadius={12}
-          barBorderTopRightRadius={12}
-          barWidth={18}
-          hideRules
-          rulesType="solid"
-          rulesColor={theme.inactive}
-          noOfSections={3}
-          // disablePress
-          // hideYAxisText
-          // yAxisLabelSuffix="분"
-          yAxisThickness={0}
-          xAxisThickness={0}
-          // showValuesAsTopLabel
-          xAxisColor={theme.inactive}
-          xAxisLabelTextStyle={{color: theme.text}}
-          disableScroll
-          isAnimated
-          animationDuration={200}
-          yAxisExtraHeight={32}
-          autoCenterTooltip
-          renderTooltip={(item: any) => {
-            return (
-              <View
-                style={{
-                  backgroundColor: theme.background,
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
-                  borderRadius: 8,
-                  borderColor: theme.primary,
-                }}>
-                <Text
-                  style={{
-                    color: theme.text,
-                    fontSize: 12,
-                    fontWeight: '500',
-                  }}>
-                  {item.stacks.map((stack: any) => stack.value).reduce((a: number, b: number) => a + b, 0)} 분
-                </Text>
-              </View>
-            );
-          }}
-        />
-
-        <View style={{gap: 4, marginTop: 16}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-              <View style={{width: 15, height: 15, borderColor: '#344BFD', borderWidth: 3, borderRadius: 15 / 2}} />
-              <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>9시간 14분</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>55%</Text>
-            </View>
+        <TouchableOpacity activeOpacity={0.7}>
+          <View style={{backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
+            <View style={{borderLeftWidth: 15, borderRightWidth: 15, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: '#fff', position: 'absolute', top: -20, right: 20}} />
+            <Text style={[typography.subtitle, {color: theme.secondary, fontWeight: 600, flexShrink: 1}]}>오늘의 목표나 간단한 메모를 적어보세요!</Text>
+            <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
           </View>
+        </TouchableOpacity>
 
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-              <View style={{width: 15, height: 15, borderColor: '#EE902C', borderWidth: 3, borderRadius: 15 / 2}} />
-              <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
+        <View style={{backgroundColor: '#fff', borderRadius: 16, padding: 16, justifyContent: 'space-between', gap: 12}}>
+          <View>
+            <Text style={[typography.subtitle, {color: theme.primary, fontWeight: 600}]}>LEAD와 공부 시작하기</Text>
+          </View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <View>
+              <Text style={{fontSize: toDP(36), fontWeight: 600, color: theme.secondary}}>2시간 30분</Text>
+              <Text style={[typography.body, {fontWeight: 600, color: theme.secondary}]}>/ 4시간 00분</Text>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>3시간 50분</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>45%</Text>
-            </View>
+            <TouchableScale>
+              <View style={{backgroundColor: theme.background, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
+              </View>
+            </TouchableScale>
+          </View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
+            <Progress.Bar style={{flex: 1}} progress={0.4} width={null} height={8} borderWidth={0} color={theme.primary} unfilledColor={theme.background} borderRadius={4} />
+            <Text style={[typography.body, {color: theme.text}]}>40%</Text>
           </View>
         </View>
       </View>

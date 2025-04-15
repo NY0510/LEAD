@@ -2,7 +2,7 @@ import {PixelRatio} from 'react-native';
 
 import TextStyles from '@/theme/types/TextStyles';
 
-const toDP = (px: number) => PixelRatio.roundToNearestPixel(px);
+export const toDP = (px: number) => PixelRatio.roundToNearestPixel(px);
 
 const Typography: TextStyles = {
   title: {
