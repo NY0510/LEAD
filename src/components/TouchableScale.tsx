@@ -1,5 +1,5 @@
 import React from 'react';
-import {Animated, Easing, View} from 'react-native';
+import {Animated, View} from 'react-native';
 
 interface Props {
   pressInDuration?: number;
@@ -7,12 +7,12 @@ interface Props {
   scaleTo?: number;
   pressInEasing?: (t: number) => number;
   pressOutEasing?: (t: number) => number;
-  onPress?: () => void;
+  onPress?: (...args: any[]) => void;
   style?: object;
   children: React.ReactNode;
 }
 
-const TouchableScale = ({onPress, pressInDuration = 150, pressOutDuration = 150, scaleTo = 0.95, pressInEasing = Easing.elastic(1.5), pressOutEasing = Easing.elastic(1.5), style, children, ...rest}: Props & {[key: string]: any}) => {
+const TouchableScale = ({onPress, pressInDuration = 100, pressOutDuration = 100, scaleTo = 0.95, pressInEasing, pressOutEasing, style, children, ...rest}: Props & {[key: string]: any}) => {
   const scale = new Animated.Value(1);
 
   const onPressIn = () => {
@@ -34,7 +34,7 @@ const TouchableScale = ({onPress, pressInDuration = 150, pressOutDuration = 150,
   };
 
   return (
-    <Animated.View style={{transform: [{scale}], ...style}} onTouchEnd={onPress} {...rest}>
+    <Animated.View style={{transform: [{scale}], ...style}} onTouchEnd={onPress} onTouchCancel={onPressOut} {...rest}>
       <View onTouchStart={onPressIn} onTouchEnd={onPressOut} onTouchCancel={onPressOut}>
         {children}
       </View>
