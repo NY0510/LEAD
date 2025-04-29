@@ -40,7 +40,7 @@ const BottomTabs = () => {
         tabBarIcon: props => <TabBarIcon route={route} size={20} color={props.color} />,
       })}>
       <BottomTab.Screen name="Home" component={Home} options={{title: '홈'}} />
-      <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석'}} />
+      <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석', headerShown:true}} />
       <BottomTab.Screen name="Study" component={Study} options={{title: '공부방'}} />
       <BottomTab.Screen name="Setting" component={Setting} options={{title: '설정'}} />
     </BottomTab.Navigator>
