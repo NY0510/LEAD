@@ -33,6 +33,15 @@ const BottomTabs = () => {
           borderColor: theme.inactive,
           borderTopWidth: 1,
         },
+        headerStatusBarHeight: 0,
+        headerTitleAlign: 'left',
+        headerTitleStyle: [typography.body, {color: theme.text, fontWeight: '600'}],
+        headerStyle: {
+          backgroundColor: theme.background,
+          shadowColor: 'transparent',
+          borderBottomColor: theme.inactive,
+          borderBottomWidth: 1,
+        },
         tabBarActiveTintColor: theme.text,
         tabBarInactiveTintColor: theme.inactive,
         tabBarLabelStyle: [typography.body, {fontSize: 12, lineHeight: 15}],
@@ -40,7 +49,7 @@ const BottomTabs = () => {
         tabBarIcon: props => <TabBarIcon route={route} size={20} color={props.color} />,
       })}>
       <BottomTab.Screen name="Home" component={Home} options={{title: '홈'}} />
-      <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석', headerShown:true}} />
+      <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석', headerShown: true}} />
       <BottomTab.Screen name="Study" component={Study} options={{title: '공부방'}} />
       <BottomTab.Screen name="Setting" component={Setting} options={{title: '설정'}} />
     </BottomTab.Navigator>

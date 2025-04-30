@@ -7,6 +7,12 @@ interface Palette {
   card: string;
   border: string;
   shadow: string;
+  red: string;
 }
 
-export default Palette;
+interface GlobalPalette {
+  white: string;
+  black: string;
+}
+
+export type {Palette, GlobalPalette};

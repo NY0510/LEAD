@@ -1,4 +1,4 @@
-import Palette from '@/theme/types/Palette';
+import {Palette} from '@/theme/types/Palette';
 
 const light: Palette = {
   background: '#F3F5F6',
@@ -9,6 +9,7 @@ const light: Palette = {
   card: '#FF0000', // TODO
   border: '#FF0000', // TODO
   shadow: '#C6CED1',
+  red: '#FF7171',
 };
 
 export default light;

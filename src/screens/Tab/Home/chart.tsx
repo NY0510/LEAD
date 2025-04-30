@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {BarChart} from 'react-native-gifted-charts';
 
 import {useAuth} from '@/contexts/AuthContext';

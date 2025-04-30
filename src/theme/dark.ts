@@ -1,4 +1,4 @@
-import Palette from '@/theme/types/Palette';
+import {Palette} from '@/theme/types/Palette';
 
 const dark: Palette = {
   background: '#ff0000',
@@ -8,6 +8,7 @@ const dark: Palette = {
   card: '#FFFFFF',
   border: '#CED4DA',
   shadow: 'rgba(0, 0, 0, 0.1)',
+  inactive: '#ff0000',
 };
 
 export default dark;
