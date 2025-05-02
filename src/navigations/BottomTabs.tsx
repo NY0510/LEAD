@@ -37,6 +37,7 @@ const BottomTabs = () => {
         headerTitleAlign: 'left',
         headerTitleStyle: [typography.body, {color: theme.text, fontWeight: '600'}],
         headerStyle: {
+          height: 48,
           backgroundColor: theme.background,
           shadowColor: 'transparent',
           borderBottomColor: theme.inactive,

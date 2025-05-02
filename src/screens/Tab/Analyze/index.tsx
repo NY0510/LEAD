@@ -147,6 +147,7 @@ const Analyze = () => {
                 // yAxisLabelSuffix="분"
                 yAxisThickness={0}
                 xAxisThickness={0}
+                initialSpacing={0}
                 // showValuesAsTopLabel
                 xAxisColor={theme.inactive}
                 xAxisLabelTextStyle={{color: theme.text}}
@@ -226,7 +227,7 @@ const Analyze = () => {
               </View>
             </View>
 
-            <View style={{alignItems: 'center'}}>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
               <BarChart
                 stackData={weeklyGoalData.map(item => ({
                   ...item,
@@ -246,6 +247,8 @@ const Analyze = () => {
                 barBorderTopRightRadius={12}
                 barWidth={18}
                 hideRules
+                initialSpacing={0}
+                //width={200}
                 rulesType="solid"
                 rulesColor={theme.inactive}
                 noOfSections={3}
@@ -258,6 +261,8 @@ const Analyze = () => {
                 xAxisColor={theme.inactive}
                 xAxisLabelTextStyle={{color: theme.text}}
                 disableScroll
+                spacing={10}
+                // width={200}
                 isAnimated
                 animationDuration={200}
                 yAxisExtraHeight={32}
