@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 
+import Card from '@/components/Card';
 import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
@@ -13,7 +15,7 @@ const Home = () => {
   const {theme, typography} = useTheme();
 
   return (
-    <View style={{alignItems: 'center', padding: 26}}>
+    <ScrollView contentContainerStyle={{alignItems: 'center', padding: 26}}>
       <View style={{gap: 22}}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
           <View style={{flexWrap: 'wrap'}}>
@@ -31,28 +33,48 @@ const Home = () => {
           </View>
         </TouchableOpacity>
 
-        <View style={{backgroundColor: '#fff', borderRadius: 16, padding: 16, justifyContent: 'space-between', gap: 12}}>
-          <View>
-            <Text style={[typography.subtitle, {color: theme.primary, fontWeight: 600}]}>LEAD와 공부 시작하기</Text>
-          </View>
+        <Card title="LEAD와 공부 시작하기">
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
             <View>
-              <Text style={{fontSize: toDP(36), fontWeight: 600, color: theme.secondary}}>2시간 30분</Text>
+              <TouchableOpacity activeOpacity={0.7}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <Text style={{fontSize: toDP(36), fontWeight: 600, color: theme.secondary}}>2시간 30분</Text>
+                  <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
+                </View>
+              </TouchableOpacity>
               <Text style={[typography.body, {fontWeight: 600, color: theme.secondary}]}>/ 4시간 00분</Text>
             </View>
-            <TouchableScale>
-              <View style={{backgroundColor: theme.background, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
-              </View>
-            </TouchableScale>
+            <TouchableOpacity activeOpacity={0.7}>
+              <TouchableScale>
+                <View style={{backgroundColor: theme.background, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                  <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
+                </View>
+              </TouchableScale>
+            </TouchableOpacity>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
             <Progress.Bar style={{flex: 1}} progress={0.4} width={null} height={8} borderWidth={0} color={theme.primary} unfilledColor={theme.background} borderRadius={4} />
             <Text style={[typography.body, {color: theme.text}]}>40%</Text>
           </View>
-        </View>
+        </Card>
+
+        <Card title="내 공부방">
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', rowGap: 12}}>
+            {Array.from({length: 6}, (_, i) => i + 1).map(num => (
+              <TouchableOpacity key={num} activeOpacity={0.7}>
+                <TouchableScale>
+                  <View style={{backgroundColor: theme.background, padding: 20, borderRadius: 16, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={[typography.body, {color: theme.text, fontWeight: 600}]}>공부방 {num}</Text>
+                  </View>
+                </TouchableScale>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Card>
+
+        <Card title="오늘의 공부"></Card>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
