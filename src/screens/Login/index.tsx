@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
-import {Alert, Image, Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 
 import GoogleSvg from '@/assets/images/google.svg';
+import LogoDarkSvg from '@/assets/images/logo_dark.svg';
+import LogoLightSvg from '@/assets/images/logo_light.svg';
 import Loading from '@/components/Loading';
 import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
@@ -9,7 +11,7 @@ import {useTheme} from '@/contexts/ThemeContext';
 
 const Login = () => {
   const {signInWithGoogle} = useAuth();
-  const {theme, typography} = useTheme();
+  const {theme, typography, isDark} = useTheme();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async () => {
@@ -30,9 +32,7 @@ const Login = () => {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-between', paddingVertical: 24}}>
       <View />
-      <View>
-        <Image source={require('@/assets/images/logo.png')} />
-      </View>
+      <View>{isDark ? <LogoDarkSvg /> : <LogoLightSvg />}</View>
       <View style={{width: '100%'}}>
         <TouchableScale onPress={handleSignIn}>
           <View
