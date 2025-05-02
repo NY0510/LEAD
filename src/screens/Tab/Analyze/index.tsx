@@ -19,14 +19,14 @@ const Analyze = () => {
     label: ['월', '화', '수', '목', '금', '토', '일'][i],
   }));
   const weeklyGoalData = Array.from({length: 7}, (_, i) => {
-    const stackValue1 = Math.floor(Math.random() * 50) + 10; // 첫 번째 stack value
-    const stackValue2 = Math.floor(Math.random() * 50) + 10; // 두 번째 stack value
+    const stackValue1 = Math.floor(Math.random() * 50) + 10;
+    const stackValue2 = Math.floor(Math.random() * 50) + 10;
     return {
       stacks: [
-        {value: stackValue1, color: '#ff7171'}, // 첫 번째 stack 값
-        {value: Math.max(stackValue2 - stackValue1, 0), color: '#C6CED1'}, // 두 번째 stack 값
+        {value: stackValue1, color: '#ff7171'},
+        {value: Math.max(stackValue2 - stackValue1, 0), color: '#C6CED1'},
       ],
-      label: ['월', '화', '수', '목', '금', '토', '일'][i], // 요일 값
+      label: ['월', '화', '수', '목', '금', '토', '일'][i],
     };
   });
 
