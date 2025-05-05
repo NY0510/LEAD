@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, ScrollView, Text, View} from 'react-native';
 import {BarChart, PieChart} from 'react-native-gifted-charts';
 
+import Chart from './components/Chart';
 import FireSvg from '@/assets/images/fire.svg';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
@@ -37,7 +38,7 @@ const Analyze = () => {
 
   return (
     <ScrollView contentContainerStyle={{alignItems: 'center', padding: 26}}>
-      <View style={{gap: 22, width: '100%'}}>
+      <View style={{gap: 26, width: '100%'}}>
         <View style={{backgroundColor: theme.global.white, borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12}}>
           <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
           <View style={{flexShrink: 1}}>
@@ -70,9 +71,7 @@ const Analyze = () => {
               </View>
             </View>
 
-            <View style={{alignItems: 'center', gap: 18}}>
-              <PieChart donut innerRadius={62} data={pieData} />
-            </View>
+            <Chart chartType="pie" pieData={pieData} />
 
             <View style={{gap: 4, marginTop: 16}}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -121,64 +120,18 @@ const Analyze = () => {
               </View>
             </View>
 
-            <View style={{alignItems: 'center'}}>
-              <BarChart
-                stackData={stackData.map(item => ({
-                  ...item,
-                  stacks: item.stacks.map((stack, index) => {
-                    if (index === 0) {
-                      return {...stack, borderRadius: 0};
-                    }
-                    if (index === 1) {
-                      // return {...stack, marginBottom: 1};
-                    }
-                    return stack;
-                  }),
-                }))}
-                barBorderTopLeftRadius={12}
-                barBorderTopRightRadius={12}
-                barWidth={18}
-                hideRules
-                rulesType="solid"
-                rulesColor={theme.inactive}
-                noOfSections={3}
-                // disablePress
-                hideYAxisText
-                // yAxisLabelSuffix="분"
-                yAxisThickness={0}
-                xAxisThickness={0}
-                initialSpacing={0}
-                // showValuesAsTopLabel
-                xAxisColor={theme.inactive}
-                xAxisLabelTextStyle={{color: theme.text}}
-                disableScroll
-                isAnimated
-                animationDuration={200}
-                yAxisExtraHeight={32}
-                autoCenterTooltip
-                renderTooltip={(item: any) => {
-                  return (
-                    <View
-                      style={{
-                        backgroundColor: theme.background,
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        borderRadius: 8,
-                        borderColor: theme.primary,
-                      }}>
-                      <Text
-                        style={{
-                          color: theme.text,
-                          fontSize: 12,
-                          fontWeight: '500',
-                        }}>
-                        {item.stacks.map((stack: any) => stack.value).reduce((a: number, b: number) => a + b, 0)} 분
-                      </Text>
-                    </View>
-                  );
-                }}
-              />
-            </View>
+            <Chart
+              chartType="bar"
+              barData={stackData.map(item => ({
+                ...item,
+                stacks: item.stacks.map((stack, index) => {
+                  if (index === 0) {
+                    return {...stack, borderRadius: 0};
+                  }
+                  return stack;
+                }),
+              }))}
+            />
 
             <View style={{gap: 4, marginTop: 16}}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -227,69 +180,23 @@ const Analyze = () => {
               </View>
             </View>
 
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <BarChart
-                stackData={weeklyGoalData.map(item => ({
-                  ...item,
-                  stacks: item.stacks.map((stack, index) => {
-                    if (index === 0) {
-                      if (item.stacks[1].value) {
-                        return {...stack, borderRadius: 0};
-                      }
+            <Chart
+              chartType="bar"
+              barData={weeklyGoalData.map(item => ({
+                ...item,
+                stacks: item.stacks.map((stack, index) => {
+                  if (index === 0) {
+                    if (item.stacks[1].value) {
+                      return {...stack, borderRadius: 0};
                     }
-                    if (index === 1) {
-                      // return {...stack, marginBottom: 1};
-                    }
-                    return stack;
-                  }),
-                }))}
-                barBorderTopLeftRadius={12}
-                barBorderTopRightRadius={12}
-                barWidth={18}
-                hideRules
-                initialSpacing={0}
-                //width={200}
-                rulesType="solid"
-                rulesColor={theme.inactive}
-                noOfSections={3}
-                // disablePress
-                hideYAxisText
-                // yAxisLabelSuffix="분"
-                yAxisThickness={0}
-                xAxisThickness={0}
-                // showValuesAsTopLabel
-                xAxisColor={theme.inactive}
-                xAxisLabelTextStyle={{color: theme.text}}
-                disableScroll
-                spacing={10}
-                // width={200}
-                isAnimated
-                animationDuration={200}
-                yAxisExtraHeight={32}
-                autoCenterTooltip
-                renderTooltip={(item: any) => {
-                  return (
-                    <View
-                      style={{
-                        backgroundColor: theme.background,
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        borderRadius: 8,
-                        borderColor: theme.primary,
-                      }}>
-                      <Text
-                        style={{
-                          color: theme.text,
-                          fontSize: 12,
-                          fontWeight: '500',
-                        }}>
-                        {item.stacks.map((stack: any) => stack.value).reduce((a: number, b: number) => a + b, 0)} 분
-                      </Text>
-                    </View>
-                  );
-                }}
-              />
-            </View>
+                  }
+                  if (index === 1) {
+                    // return {...stack, marginBottom: 1};
+                  }
+                  return stack;
+                }),
+              }))}
+            />
 
             <View style={{gap: 4, marginTop: 16}}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

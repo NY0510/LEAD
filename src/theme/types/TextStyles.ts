@@ -5,6 +5,7 @@ interface TextStyles {
   subtitle: TextStyle;
   body: TextStyle;
   caption: TextStyle;
+  baseTextStyle: TextStyle;
 }
 
 export default TextStyles;

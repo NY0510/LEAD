@@ -9,6 +9,7 @@ const baseTextStyle = {
 };
 
 const Typography: TextStyles = {
+  baseTextStyle,
   title: {
     ...baseTextStyle,
     fontSize: toDP(24),
