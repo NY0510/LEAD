@@ -4,7 +4,7 @@ import {StyleSheet, Text, View, ViewStyle} from 'react-native';
 import {useTheme} from '@/contexts/ThemeContext';
 
 type Segment = {
-  value: number; // percentage (0-1)
+  value: number;
   color: string;
   label?: string;
 };
@@ -33,13 +33,10 @@ const ProgressBar = ({segments, height = 20, borderRadius = 8, showLabels = fals
       alignItems: 'center',
     },
     label: {
-      color: '#fff',
+      ...typography.baseTextStyle,
+      color: theme.global.white,
       fontSize: 12,
-      fontWeight: 'bold',
-      textShadowColor: 'rgba(0,0,0,0.3)',
-      textShadowOffset: {width: 0, height: 1},
-      textShadowRadius: 2,
-      paddingHorizontal: 4,
+      fontWeight: '600',
     },
   });
 

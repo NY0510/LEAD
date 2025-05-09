@@ -4,18 +4,23 @@ import {ScrollView} from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 
 import Card from '@/components/Card';
+import ProgressBar from '@/components/ProgressBar';
 import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
+import {RootStackParamList} from '@/navigations/RootStacks';
 import {toDP} from '@/theme/typography';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 
 const Home = () => {
   const {user, signOut} = useAuth();
   const {theme, typography} = useTheme();
 
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   return (
-    <ScrollView contentContainerStyle={{alignItems: 'center', padding: 26}}>
+    <ScrollView contentContainerStyle={{padding: 26}}>
       <View style={{gap: 22}}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
           <View style={{flexWrap: 'wrap'}}>
@@ -44,7 +49,7 @@ const Home = () => {
               </TouchableOpacity>
               <Text style={[typography.body, {fontWeight: 600, color: theme.secondary}]}>/ 4시간 00분</Text>
             </View>
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Study')}>
               <TouchableScale>
                 <View style={{backgroundColor: theme.background, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
@@ -72,7 +77,17 @@ const Home = () => {
           </View>
         </Card>
 
-        <Card title="오늘의 공부"></Card>
+        <Card title="오늘의 공부">
+          <ProgressBar
+            segments={[
+              {value: 0.6, color: '#344BFD', label: '순 공부'},
+              {value: 0.3, color: '#F68D2B', label: '공부 이외'},
+            ]}
+            height={22}
+            borderRadius={10}
+            showLabels={true}
+          />
+        </Card>
       </View>
     </ScrollView>
   );

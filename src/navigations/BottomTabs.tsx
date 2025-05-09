@@ -7,7 +7,7 @@ import {useTheme} from '@/contexts/ThemeContext';
 import Analyze from '@/screens/Tab/Analyze';
 import Home from '@/screens/Tab/Home';
 import Setting from '@/screens/Tab/Setting';
-import Study from '@/screens/Tab/Study';
+import StudyRoom from '@/screens/Tab/StudyRoom';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -51,7 +51,7 @@ const BottomTabs = () => {
       })}>
       <BottomTab.Screen name="Home" component={Home} options={{title: '홈'}} />
       <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석', headerShown: true}} />
-      <BottomTab.Screen name="Study" component={Study} options={{title: '공부방'}} />
+      <BottomTab.Screen name="StudyRoom" component={StudyRoom} options={{title: '공부방'}} />
       <BottomTab.Screen name="Setting" component={Setting} options={{title: '설정'}} />
     </BottomTab.Navigator>
   );

@@ -4,7 +4,7 @@ import {Text, View} from 'react-native';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 
-const Study = () => {
+const StudyRoom = () => {
   const {user, signOut} = useAuth();
   const {theme, typography} = useTheme();
 
@@ -15,4 +15,4 @@ const Study = () => {
   );
 };
 
-export default Study;
+export default StudyRoom;
