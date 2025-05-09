@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import {BarChart, PieChart, barDataItem, pieDataItem, stackDataItem} from 'react-native-gifted-charts';
+import {BarChart, PieChart, pieDataItem, stackDataItem} from 'react-native-gifted-charts';
 
 import {useTheme} from '@/contexts/ThemeContext';
 
@@ -34,7 +34,7 @@ const Chart = ({pieData, barData, chartType}: Props) => {
           // yAxisLabelSuffix="분"
           yAxisThickness={0}
           xAxisThickness={0}
-          // initialSpacing={0}
+          initialSpacing={0}
           // showValuesAsTopLabel
           xAxisColor={theme.inactive}
           xAxisLabelTextStyle={{color: theme.text}}
