@@ -1,6 +1,5 @@
 import React from 'react';
 import {Image, ScrollView, Text, View} from 'react-native';
-import {BarChart, PieChart} from 'react-native-gifted-charts';
 
 import Chart from './components/Chart';
 import FireSvg from '@/assets/images/fire.svg';
@@ -37,7 +36,7 @@ const Analyze = () => {
   ];
 
   return (
-    <ScrollView contentContainerStyle={{alignItems: 'center', padding: 26}}>
+    <ScrollView contentContainerStyle={{alignItems: 'center', padding: 24}}>
       <View style={{gap: 26, width: '100%'}}>
         <View style={{backgroundColor: theme.global.white, borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12}}>
           <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
@@ -197,30 +196,6 @@ const Analyze = () => {
                 }),
               }))}
             />
-
-            <View style={{gap: 4, marginTop: 16}}>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                  <View style={{width: 15, height: 15, borderColor: '#344BFD', borderWidth: 3, borderRadius: 15 / 2}} />
-                  <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>9시간 14분</Text>
-                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>55%</Text>
-                </View>
-              </View>
-
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                  <View style={{width: 15, height: 15, borderColor: '#EE902C', borderWidth: 3, borderRadius: 15 / 2}} />
-                  <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>3시간 50분</Text>
-                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>45%</Text>
-                </View>
-              </View>
-            </View>
           </View>
         </View>
       </View>
