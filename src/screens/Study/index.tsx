@@ -1,9 +1,10 @@
 import React, {useEffect} from 'react';
-import {Alert, Linking, Text, View} from 'react-native';
+import {Alert, Linking, Text, TouchableOpacity, View} from 'react-native';
 import {Camera, useCameraDevice, useCameraDevices} from 'react-native-vision-camera';
 
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const Study = () => {
   const {user, signOut} = useAuth();
@@ -41,12 +42,37 @@ const Study = () => {
     })();
   }, []);
 
-  const device = useCameraDevice('back');
+  // const device = null;
+  const device = useCameraDevice('front');
 
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      {!device ? <Text style={[typography.body, {color: theme.text}]}>카메라 없음</Text> : <Camera style={{width: 200, height: 200}} device={device} isActive={true} photo={true} />}
-      <Text style={[typography.body, {color: theme.text}]}>카메라 권한: {Camera.getCameraPermissionStatus()}</Text>
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18, gap: 22}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 16}}>
+        <View style={{flex: 1, backgroundColor: theme.global.white, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
+          <View>
+            <Text style={[typography.subtitle, {color: theme.primary, fontWeight: 700}]}>공부 시간</Text>
+            <Text style={[typography.baseTextStyle, {fontSize: 32, fontWeight: 700, color: theme.secondary}]}>02:00:31</Text>
+          </View>
+          <View style={{alignItems: 'flex-end'}}>
+            <Text style={[typography.subtitle, {color: theme.primary, fontWeight: 700}]}>집중도</Text>
+            <Text style={[typography.baseTextStyle, {fontSize: 32, fontWeight: 700, color: theme.secondary}]}>80%</Text>
+          </View>
+        </View>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
+          <View style={{backgroundColor: theme.global.white, padding: 20, borderRadius: 999, aspectRatio: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View style={{flex: 1, width: '100%', borderRadius: 24, overflow: 'hidden'}}>
+        {!device ? (
+          <View style={{flex: 1, backgroundColor: theme.inactive, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={[typography.body, {color: theme.text}]}>카메라를 찾을 수 없습니다.</Text>
+          </View>
+        ) : (
+          <Camera style={{flex: 1}} device={device} isActive={true} photo={true} />
+        )}
+      </View>
     </View>
   );
 };

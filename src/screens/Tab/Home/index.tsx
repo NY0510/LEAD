@@ -20,7 +20,7 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
-    <ScrollView contentContainerStyle={{padding: 26}}>
+    <ScrollView contentContainerStyle={{padding: 18}}>
       <View style={{gap: 22}}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
           <View style={{flexWrap: 'wrap'}}>
@@ -31,7 +31,7 @@ const Home = () => {
         </View>
 
         <TouchableOpacity activeOpacity={0.7}>
-          <View style={{backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
+          <View style={{backgroundColor: theme.global.white, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
             <View style={{borderLeftWidth: 15, borderRightWidth: 15, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: '#fff', position: 'absolute', top: -20, right: 20}} />
             <Text style={[typography.subtitle, {color: theme.secondary, fontWeight: 600, flexShrink: 1}]}>오늘의 목표나 간단한 메모를 적어보세요!</Text>
             <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
@@ -40,15 +40,15 @@ const Home = () => {
 
         <Card title="LEAD와 공부 시작하기">
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-            <View>
-              <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity activeOpacity={0.7}>
+              <View>
                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
                   <Text style={{fontSize: toDP(36), fontWeight: 600, color: theme.secondary}}>2시간 30분</Text>
                   <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
                 </View>
-              </TouchableOpacity>
-              <Text style={[typography.body, {fontWeight: 600, color: theme.secondary}]}>/ 4시간 00분</Text>
-            </View>
+                <Text style={[typography.body, {fontWeight: 600, color: theme.secondary}]}>/ 4시간 00분</Text>
+              </View>
+            </TouchableOpacity>
             <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Study')}>
               <TouchableScale>
                 <View style={{backgroundColor: theme.background, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>

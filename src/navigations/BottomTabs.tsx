@@ -73,7 +73,7 @@ const TabBarIcon = ({route, size, color}: {route: {name: string}; size: number; 
       return <FontAwesome6 name="house" iconStyle="solid" size={size} color={color} />;
     case 'Analyze':
       return <FontAwesome6 name="chart-simple" iconStyle="solid" size={size} color={color} />;
-    case 'Study':
+    case 'StudyRoom':
       return <FontAwesome6 name="book" iconStyle="solid" size={size} color={color} />;
     case 'Setting':
       return <FontAwesome6 name="gear" iconStyle="solid" size={size} color={color} />;
