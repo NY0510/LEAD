@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Image, Text, View} from 'react-native';
 
 import FireSvg from '@/assets/images/fire.svg';
@@ -8,6 +8,7 @@ import {useTheme} from '@/contexts/ThemeContext';
 const ProfileCard = () => {
   const {user} = useAuth();
   const {theme, typography} = useTheme();
+  const [focusedAvg, setFocusedAvg] = useState(0);
 
   return (
     <View style={{backgroundColor: theme.global.white, borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12}}>
@@ -15,7 +16,7 @@ const ProfileCard = () => {
       <View style={{flexShrink: 1}}>
         <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>{user?.displayName}</Text>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
-          <Text style={[typography.body, {color: theme.red, fontWeight: '600'}]}>평균 집중도 78%</Text>
+          <Text style={[typography.body, {color: theme.red, fontWeight: '600'}]}>평균 집중도 {focusedAvg}%</Text>
           <FireSvg width={16} height={16} />
         </View>
       </View>

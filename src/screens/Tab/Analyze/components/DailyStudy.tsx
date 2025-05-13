@@ -1,16 +1,21 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
 import {useTheme} from '@/contexts/ThemeContext';
+import {formatTime} from '@/screens/Tab/Analyze/libs/MinToHour';
+import {calcPer} from '@/screens/Tab/Analyze/libs/Persentage';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const DailyStudy = () => {
   const {theme, typography} = useTheme();
+  const [trueStudyHour, setTrueStudyHour] = useState(80);
+  const [exceptionalHour, setExceptionalHour] = useState(60);
+  const [totalHour, setTotalHour] = useState(trueStudyHour + exceptionalHour);
 
   const pieData = [
-    {value: 55, color: '#EE902C'},
-    {value: 45, color: '#344BFD'},
+    {value: trueStudyHour, color: '#EE902C'},
+    {value: exceptionalHour, color: '#344BFD'},
   ];
 
   return (
@@ -31,7 +36,7 @@ const DailyStudy = () => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <View>
             <Text style={[typography.body, {color: theme.text}]}>오늘 공부</Text>
-            <Text style={[typography.title, {color: theme.text}]}>3시간 50분</Text>
+            <Text style={[typography.title, {color: theme.text}]}>{formatTime(totalHour)}</Text>
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>어제보다</Text>
@@ -46,8 +51,8 @@ const DailyStudy = () => {
               <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>1시간 20분</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>55%</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(trueStudyHour)}</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(totalHour, trueStudyHour)}%</Text>
             </View>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -56,8 +61,8 @@ const DailyStudy = () => {
               <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>1시간</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>45%</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(exceptionalHour)}</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(totalHour, exceptionalHour)}%</Text>
             </View>
           </View>
         </View>
