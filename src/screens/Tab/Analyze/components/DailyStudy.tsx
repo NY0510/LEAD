@@ -3,8 +3,8 @@ import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
 import {useTheme} from '@/contexts/ThemeContext';
-import {formatTime} from '@/lib/MinToHour';
-import {calcPer} from '@/lib/Persentage';
+import {calcPer} from '@/lib/persentage';
+import {formatTime} from '@/lib/timeUtils';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const DailyStudy = () => {
