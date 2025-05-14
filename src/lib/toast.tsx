@@ -12,15 +12,15 @@ export const getToastConfig = (theme: Palette & {global: GlobalPalette}, typogra
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 14,
+        marginTop: 24,
         width: Dimensions.get('window').width - 30,
-        backgroundColor: theme.global.white,
+        backgroundColor: theme.background,
         borderColor: theme.primary,
         borderWidth: 1,
         padding: 14,
         borderRadius: 18,
       }}>
-      <Text style={[typography.body, {color: theme.text}]}>{text1}</Text>
+      <Text style={[typography.body, {color: theme.text, fontWeight: '500'}]}>{text1}</Text>
     </View>
   ),
 });

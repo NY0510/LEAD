@@ -35,7 +35,7 @@ const BottomTabs = () => {
         },
         headerStatusBarHeight: 0,
         headerTitleAlign: 'left',
-        headerTitleStyle: [typography.body, {color: theme.text, fontWeight: '600'}],
+        headerTitleStyle: [typography.body, {color: theme.text, fontWeight: '500', fontSize: 20}],
         headerStyle: {
           height: 48,
           backgroundColor: theme.background,
@@ -50,7 +50,7 @@ const BottomTabs = () => {
         tabBarIcon: props => <TabBarIcon route={route} size={20} color={props.color} />,
       })}>
       <BottomTab.Screen name="Home" component={Home} options={{title: '홈'}} />
-      <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석', headerShown: true}} />
+      <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석'}} />
       <BottomTab.Screen name="StudyRoom" component={StudyRoom} options={{title: '공부방'}} />
       <BottomTab.Screen name="Setting" component={Setting} options={{title: '설정'}} />
     </BottomTab.Navigator>
