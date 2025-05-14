@@ -3,6 +3,7 @@ import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 
+import {getUser, signup} from '@/api';
 import Card from '@/components/Card';
 import ProgressBar from '@/components/ProgressBar';
 import TouchableScale from '@/components/TouchableScale';
@@ -18,6 +19,17 @@ const Home = () => {
   const {theme, typography} = useTheme();
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  useEffect(() => {
+    (async () => {
+      if (user) {
+        const userData = await getUser(user.uid);
+        if (!userData) {
+          await signup(user.uid);
+        }
+      }
+    })();
+  }, [user]);
 
   return (
     <ScrollView contentContainerStyle={{padding: 18}}>
