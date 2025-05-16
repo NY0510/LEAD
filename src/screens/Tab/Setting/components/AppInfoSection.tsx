@@ -7,7 +7,6 @@ import Card from '@/components/Card';
 import {useTheme} from '@/contexts/ThemeContext';
 import {appBuildNumber, appVersion, buildDate} from '@/lib/buildInfo';
 import {RootStackParamList} from '@/navigations/RootStacks';
-import {toDP} from '@/theme/typography';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 
 const AppInfoSection = () => {
@@ -48,7 +47,7 @@ Build Date: ${buildDate.format('YYYY년 M월 D일')}
   };
 
   return (
-    <Card title="앱 정보" titleStyle={{fontSize: toDP(typography.body.fontSize)}}>
+    <Card title="앱 정보" titleStyle={{fontSize: typography.body.fontSize}}>
       <View style={{gap: 8, marginTop: 8}}>
         <Content title="버전" content={appVersion} />
         <Content title="빌드 번호" content={appBuildNumber} />
