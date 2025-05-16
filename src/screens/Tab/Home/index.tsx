@@ -1,10 +1,11 @@
 import React, {Fragment, useCallback, useEffect, useRef, useState} from 'react';
-import {Image, Keyboard, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {Image, Keyboard, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {TimerPicker, TimerPickerRef} from 'react-native-timer-picker';
 
-import styles from './styles';
+import {getGoal, getMemo, getStudyToday, setGoal, setMemo} from '@/api';
 import Card from '@/components/Card';
+import Loading from '@/components/Loading';
 import ProgressBar from '@/components/ProgressBar';
 import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
@@ -14,7 +15,6 @@ import {showToast} from '@/lib/toast';
 import {RootStackParamList} from '@/navigations/RootStacks';
 import {toDP} from '@/theme/typography';
 import BottomSheet, {BottomSheetBackdrop, BottomSheetTextInput, BottomSheetView} from '@gorhom/bottom-sheet';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 
@@ -23,45 +23,82 @@ const Home = () => {
   const {theme, typography} = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const [goalStudyTime, setGoalStudyTime] = useState(4 * 60); // 목표 공부 시간
-  const [pureStudyTime, setPureStudyTime] = useState(2.5 * 60); // 순 공부 시간
-  const [studyTimeOther, setStudyTimeOther] = useState(1 * 60); // 공부 이외 시간
-  const [studyTimePer, setStudyTimePer] = useState(pureStudyTime / goalStudyTime); // 달성률
-  const [memo, setMemo] = useState<string>(''); // 메모
+  const [goalStudyTime, setGoalStudyTime] = useState<number | null>(null); // 목표 공부 시간
+  const [pureStudyTime, setPureStudyTime] = useState<number | null>(null); // 순 공부 시간
+  const [nonStudyTime, setNonStudyTime] = useState<number | null>(null); // 공부 이외 시간
+  const [totalStudyTime, setTotalStudyTime] = useState<number | null>(null); // 총 공부 시간
+  const [achievement, setAchievement] = useState<number | null>(null); // 달성률
+  const [memoState, setMemoState] = useState<string>(''); // 메모
+
+  const [studyTimeLoading, setStudyTimeLoading] = useState(true);
+  const [memoLoading, setMemoLoading] = useState(true);
 
   const [timePickerValue, setTimePickerValue] = useState({hours: 0, minutes: 0});
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const timerPickerRef = useRef<TimerPickerRef>(null);
 
+  const studyTimeBottomSheetRef = useRef<BottomSheet>(null);
   const memoBottomSheetRef = useRef<BottomSheet>(null);
-  const [memoInput, setMemoInput] = useState('');
 
-  // 달성률 계산
-  useEffect(() => setStudyTimePer(pureStudyTime / goalStudyTime), [goalStudyTime, pureStudyTime]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // 메모 가져오기 (최초 1회만)
   useEffect(() => {
+    if (!user?.uid) {
+      return;
+    }
+
     (async () => {
-      const storedMemo = await AsyncStorage.getItem('memo');
-      if (storedMemo !== null) {
-        setMemo(storedMemo);
-        setMemoInput(storedMemo);
-      } else {
-        setMemo('');
-        setMemoInput('');
+      const {goal} = await getGoal(user.uid);
+      if (goal) {
+        setGoalStudyTime(goal);
       }
     })();
-  }, []);
+  }, [user?.uid]);
 
-  const openBottomSheet = () => {
-    if (bottomSheetRef.current) {
-      bottomSheetRef.current.snapToIndex(0);
+  const fetchTodayStudyData = useCallback(async () => {
+    setStudyTimeLoading(true);
+    try {
+      const r = await getStudyToday(user!.uid);
+      console.log('today study data', r);
+      setPureStudyTime(r.pure_study ?? 0);
+      setNonStudyTime(r.non_study ?? 0);
+      setTotalStudyTime(r.total ?? 0);
+
+      setStudyTimeLoading(false);
+    } catch (e) {
+      return showToast(`오늘의 공부 기록을 가져오는데 실패했어요.\n${(e as Error).message}`);
     }
-  };
+  }, [user]);
 
-  const openMemoBottomSheet = () => {
-    setMemoInput(memo); // 현재 메모를 입력창에 반영
-    memoBottomSheetRef.current?.snapToIndex(0);
+  const fetchMemo = useCallback(async () => {
+    setMemoLoading(true);
+    try {
+      const r = await getMemo(user!.uid);
+      setMemoState(r.memo);
+      setMemoLoading(false);
+    } catch (e) {
+      return showToast(`메모를 가져오는데 실패했어요.\n${(e as Error).message}`);
+    }
+  }, [user]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([fetchTodayStudyData(), fetchMemo()]);
+    setRefreshing(false);
+  }, [fetchTodayStudyData, fetchMemo]);
+
+  // 데이터 가져오기
+  useEffect(() => {
+    fetchTodayStudyData();
+    fetchMemo();
+  }, [fetchMemo, fetchTodayStudyData]);
+
+  // 달성률 계산
+  useEffect(() => setAchievement(goalStudyTime && pureStudyTime ? pureStudyTime / goalStudyTime : 0), [goalStudyTime, pureStudyTime]);
+
+  const openBottomSheet = (ref: React.RefObject<BottomSheet | null>) => {
+    if (ref && ref.current) {
+      ref.current.snapToIndex(0);
+    }
   };
 
   const renderBackdrop = useCallback(
@@ -83,56 +120,80 @@ const Home = () => {
 
   return (
     <Fragment>
-      <ScrollView contentContainerStyle={{padding: 18}}>
-        <View style={styles.container}>
-          <View style={styles.headerRow}>
-            <View style={styles.headerTextWrap}>
-              <Text style={[typography.subtitle, styles.headerName, {color: theme.primary}]}>{user?.displayName}</Text>
-              <Text style={[typography.subtitle, styles.headerSub, {color: theme.text}]}>님의 하루를 LEAD가 응원할게요!</Text>
+      <ScrollView contentContainerStyle={{padding: 18}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+        <View style={{gap: 22}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+            <View style={{flexWrap: 'wrap'}}>
+              <Text style={[typography.subtitle, {fontWeight: '600'}, {color: theme.primary}]}>{user?.displayName}</Text>
+              <Text style={[typography.subtitle, {}, {color: theme.text}]}>님의 하루를 LEAD가 응원할게요!</Text>
             </View>
-            <Image source={require('@/assets/images/rock.png')} style={styles.headerImage} />
+            <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
           </View>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openMemoBottomSheet}>
-            <View style={[styles.memoTouchable, {backgroundColor: theme.global.white}]}>
-              <View style={[styles.memoArrow, {borderBottomColor: theme.global.white}]} />
-              <Text style={[typography.subtitle, {color: theme.secondary}, styles.memoText]}>{memo && memo.trim() !== '' ? memo : '오늘의 목표나 간단한 메모를 적어보세요!'}</Text>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => openBottomSheet(memoBottomSheetRef)}>
+            <View style={[{borderRadius: 16, paddingHorizontal: 14, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}, {backgroundColor: '#fff'}]}>
+              <View style={[{borderLeftWidth: 15, borderRightWidth: 15, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', position: 'absolute', top: -20, right: 20}, {borderBottomColor: '#fff'}]} />
+              {memoLoading || refreshing ? (
+                <SkeletonPlaceholder borderRadius={8}>
+                  <SkeletonPlaceholder.Item width={300} height={20} />
+                </SkeletonPlaceholder>
+              ) : (
+                <Text style={[typography.subtitle, {color: theme.secondary}, {fontWeight: '600', flexShrink: 1}]}>{memoState || '오늘의 목표나 메모를 적어보세요!'}</Text>
+              )}
               <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
             </View>
           </TouchableOpacity>
 
           <Card title="LEAD와 공부 시작하기">
-            <View style={styles.cardRow}>
-              <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-                <View>
-                  <View style={styles.studyTimeRow}>
-                    <Text style={[{fontSize: toDP(36), color: theme.text}, styles.studyTimeText]}>{formatTime(pureStudyTime)}</Text>
-                    <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
-                  </View>
-                  <Text style={[typography.body, {color: theme.secondary}, styles.studyTimeSub]}>/ {formatTime(goalStudyTime)}</Text>
+            <Fragment>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => openBottomSheet(studyTimeBottomSheetRef)}>
+                  {studyTimeLoading || refreshing ? (
+                    <SkeletonPlaceholder borderRadius={8}>
+                      <SkeletonPlaceholder.Item width={60} height={50} marginBottom={4} />
+                      <SkeletonPlaceholder.Item width={100} height={20} />
+                    </SkeletonPlaceholder>
+                  ) : (
+                    <View>
+                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                        <Text style={[{fontSize: toDP(36), color: theme.text}, {fontWeight: '600'}]}>{formatTime(pureStudyTime!)}</Text>
+                        <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
+                      </View>
+                      <Text style={[typography.body, {color: theme.secondary}, {fontWeight: '600'}]}>/ {formatTime(goalStudyTime!)}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Study')}>
+                  <TouchableScale>
+                    <View style={[{aspectRatio: 1, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, {backgroundColor: theme.background}]}>
+                      <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
+                    </View>
+                  </TouchableScale>
+                </TouchableOpacity>
+              </View>
+              {studyTimeLoading || refreshing ? (
+                <SkeletonPlaceholder borderRadius={8}>
+                  <SkeletonPlaceholder.Item flexDirection="row" alignItems="center" justifyContent="space-between" gap={12}>
+                    <SkeletonPlaceholder.Item flex={1} height={12} />
+                    <SkeletonPlaceholder.Item width={30} height={12} />
+                  </SkeletonPlaceholder.Item>
+                </SkeletonPlaceholder>
+              ) : (
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12}}>
+                  <ProgressBar style={{flex: 1}} segments={[{value: achievement!, color: '#344BFD'}]} height={12} borderRadius={6} />
+                  <Text style={[typography.body, {color: theme.text, fontWeight: '500'}]}>{Math.round(achievement! * 100)}%</Text>
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Study')}>
-                <TouchableScale>
-                  <View style={[styles.playButton, {backgroundColor: theme.background}]}>
-                    <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
-                  </View>
-                </TouchableScale>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.progressRow}>
-              <ProgressBar style={{flex: 1}} segments={[{value: studyTimePer, color: '#344BFD'}]} height={12} borderRadius={6} />
-              <Text style={[typography.body, {color: theme.text}]}>{Math.round(studyTimePer * 100)}%</Text>
-            </View>
+              )}
+            </Fragment>
           </Card>
 
           <Card title="내 공부방">
-            <View style={styles.studyRoomRow}>
-              {Array.from({length: 6}, (_, i) => (
-                <TouchableOpacity key={i} activeOpacity={0.7} style={styles.studyRoomButton}>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12}}>
+              {Array.from({length: 3}, (_, i) => (
+                <TouchableOpacity key={i} activeOpacity={0.7} style={{flexGrow: 1}}>
                   <TouchableScale>
-                    <View style={[styles.studyRoomInner, {backgroundColor: theme.background}]}>
-                      <Text style={[typography.body, {color: theme.text}, styles.studyRoomText]}>공부방 {i + 1}</Text>
+                    <View style={[{padding: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center', width: '100%'}, {backgroundColor: theme.background}]}>
+                      <Text style={[typography.body, {color: theme.text}, {fontWeight: '600'}]}>공부방 {i + 1}</Text>
                     </View>
                   </TouchableScale>
                 </TouchableOpacity>
@@ -141,54 +202,71 @@ const Home = () => {
           </Card>
 
           <Card title="오늘의 공부">
-            <View style={styles.todayStudyWrap}>
-              <View style={styles.todayStudyLegendRow}>
-                <View style={styles.todayStudyLegendItemBlue}>
-                  <View style={styles.todayStudyLegendCircleBlue} />
+            <View style={{gap: 8}}>
+              <View style={{flexDirection: 'row', gap: 12}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
+                  <View style={{width: 15, height: 15, borderColor: '#344BFD', borderWidth: 3, borderRadius: 7.5}} />
                   <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
                 </View>
-                <View style={styles.todayStudyLegendItemOrange}>
-                  <View style={styles.todayStudyLegendCircleOrange} />
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
+                  <View style={{width: 15, height: 15, borderColor: '#EE902C', borderWidth: 3, borderRadius: 7.5}} />
                   <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
                 </View>
               </View>
 
-              <ProgressBar
-                segments={[
-                  {value: pureStudyTime / goalStudyTime, color: '#344BFD'},
-                  {value: studyTimeOther / goalStudyTime, color: '#F68D2B'},
-                ]}
-                height={12}
-                borderRadius={6}
-              />
+              {studyTimeLoading || refreshing ? (
+                <SkeletonPlaceholder borderRadius={8}>
+                  <SkeletonPlaceholder.Item width={'100%'} height={12} />
+                </SkeletonPlaceholder>
+              ) : (
+                <ProgressBar
+                  segments={[
+                    {value: (pureStudyTime ?? 0) / (totalStudyTime ?? 1), color: '#344BFD'},
+                    {value: (nonStudyTime ?? 0) / (totalStudyTime ?? 1), color: '#F68D2B'},
+                  ]}
+                  height={12}
+                  borderRadius={6}
+                />
+              )}
             </View>
           </Card>
         </View>
       </ScrollView>
 
-      <BottomSheet backdropComponent={renderBackdrop} ref={bottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: theme.global.white, borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
-        <BottomSheetView style={[styles.bottomSheetContent, {backgroundColor: theme.global.white}]}>
-          <Text style={[typography.subtitle, {color: theme.text}, styles.bottomSheetTitle]}>목표 공부 시간 변경</Text>
-          <View style={[styles.timerPickerWrap, {backgroundColor: theme.background}]}>
-            <TimerPicker
-              ref={timerPickerRef}
-              initialValue={{hours: goalStudyTime / 60, minutes: goalStudyTime % 60}}
-              onDurationChange={v => setTimePickerValue(v)}
-              hourInterval={1}
-              minuteInterval={10}
-              hourLabel={'시간'}
-              minuteLabel={'분'}
-              hideSeconds
-              styles={{
-                pickerItem: {...typography.baseTextStyle, fontSize: 24, fontWeight: '600', color: theme.primary},
-                pickerLabel: {...typography.baseTextStyle, fontWeight: '600', right: -12, color: theme.secondary},
-                backgroundColor: 'transparent',
-              }}
-            />
+      <BottomSheet backdropComponent={renderBackdrop} ref={studyTimeBottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
+        <BottomSheetView style={[{padding: 24, borderTopLeftRadius: 16, borderTopRightRadius: 16, alignItems: 'center', gap: 16}, {backgroundColor: '#fff'}]}>
+          <View style={{alignSelf: 'flex-start', gap: 4}}>
+            <Text style={[typography.subtitle, {fontWeight: '700', fontSize: 20}, {color: theme.text}]}>목표 공부 시간 변경</Text>
+            <Text style={[typography.body, {fontWeight: '400', fontSize: 16}, {color: theme.text}]}>공부를 시작한 이후에 변경할 시 공부 시간이 초기화돼요.</Text>
+          </View>
+          <View style={[{width: '100%', borderRadius: 12, paddingVertical: 8, alignItems: 'center', marginBottom: 8}, {backgroundColor: theme.background}]}>
+            {goalStudyTime !== null ? (
+              <TimerPicker
+                key={goalStudyTime}
+                ref={timerPickerRef}
+                initialValue={{
+                  hours: Math.floor(goalStudyTime / 60),
+                  minutes: goalStudyTime % 60,
+                }}
+                onDurationChange={v => setTimePickerValue(v)}
+                hourInterval={1}
+                minuteInterval={10}
+                hourLabel={'시간'}
+                minuteLabel={'분'}
+                hideSeconds
+                styles={{
+                  pickerItem: {...typography.baseTextStyle, fontSize: 24, fontWeight: '600', color: theme.primary},
+                  pickerLabel: {...typography.baseTextStyle, fontWeight: '600', right: -12, color: theme.secondary},
+                  backgroundColor: 'transparent',
+                }}
+              />
+            ) : (
+              <Loading />
+            )}
           </View>
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.saveButton, {backgroundColor: theme.primary}]}
+            style={[{borderRadius: 8, paddingVertical: 12, paddingHorizontal: 32, alignSelf: 'stretch', alignItems: 'center'}, {backgroundColor: theme.primary}]}
             onPress={() => {
               const latestDuration = timerPickerRef.current?.latestDuration;
               const hours = latestDuration?.hours?.current || timePickerValue.hours;
@@ -197,17 +275,19 @@ const Home = () => {
                 return showToast('목표 공부 시간을 0으로 설정할 수 없어요.');
               }
 
-              setGoalStudyTime(hours * 60 + minutes);
-              bottomSheetRef.current?.close();
+              const newGoal = hours * 60 + minutes;
+              setGoalStudyTime(newGoal);
+              setGoal(user!.uid, newGoal);
+              studyTimeBottomSheetRef.current?.close();
             }}>
-            <Text style={[typography.body, {color: theme.global.white}, styles.saveButtonText]}>저장</Text>
+            <Text style={[typography.body, {color: '#fff'}, {fontWeight: '600'}]}>저장</Text>
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
 
-      <BottomSheet backdropComponent={renderBackdrop} ref={memoBottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: theme.global.white, borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
-        <BottomSheetView style={[styles.bottomSheetContent, {backgroundColor: theme.global.white}]}>
-          <Text style={[typography.subtitle, {color: theme.text}, styles.bottomSheetTitle]}>메모 입력</Text>
+      <BottomSheet backdropComponent={renderBackdrop} ref={memoBottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
+        <BottomSheetView style={[{padding: 24, borderTopLeftRadius: 16, borderTopRightRadius: 16, alignItems: 'center', gap: 16}, {backgroundColor: '#fff'}]}>
+          <Text style={[typography.subtitle, {color: theme.text}, {fontWeight: '700', fontSize: 20}]}>메모 입력</Text>
           <View style={{flex: 1, width: '100%'}}>
             <BottomSheetTextInput
               style={{
@@ -221,22 +301,25 @@ const Home = () => {
                 ...typography.body,
               }}
               multiline
-              value={memoInput}
-              onChangeText={setMemoInput}
+              value={memoState}
+              onChangeText={(text: string) => setMemoState(text.trim())}
               placeholder="오늘의 목표나 메모를 적어보세요"
               placeholderTextColor={theme.inactive}
             />
           </View>
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.saveButton, {backgroundColor: theme.primary}]}
+            style={[{borderRadius: 8, paddingVertical: 12, paddingHorizontal: 32, alignSelf: 'stretch', alignItems: 'center'}, {backgroundColor: theme.primary}]}
             onPress={async () => {
+              if (memoState.length > 100) {
+                return showToast('메모는 100자 이내로 작성해주세요.');
+              }
+
+              setMemo(user!.uid, memoState);
               Keyboard.dismiss();
-              setMemo(memoInput);
-              await AsyncStorage.setItem('memo', memoInput);
               memoBottomSheetRef.current?.close();
             }}>
-            <Text style={[typography.body, {color: theme.global.white}, styles.saveButtonText]}>저장</Text>
+            <Text style={[typography.body, {color: '#fff'}, {fontWeight: '600'}]}>저장</Text>
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>

@@ -1,52 +1,28 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext} from 'react';
 import {useColorScheme} from 'react-native';
 
-import {darkTheme, globalTheme, lightTheme} from '@/theme';
-import {GlobalPalette, Palette} from '@/theme/types/Palette';
+import {darkTheme, lightTheme} from '@/theme';
+import Palette from '@/theme/types/Palette';
 import TextStyles from '@/theme/types/TextStyles';
 import Typography from '@/theme/typography';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-type Theme = Palette & {global: GlobalPalette};
 
 const ThemeContext = createContext<{
-  theme: Theme;
+  theme: Palette;
   isDark: boolean;
   typography: TextStyles;
-  toggleTheme: () => void;
 }>({
-  theme: {...lightTheme, global: globalTheme},
+  theme: lightTheme,
   isDark: false,
   typography: Typography,
-  toggleTheme: () => {},
 });
 
 export const ThemeProvider = ({children}: {children: React.ReactNode}) => {
   const systemTheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemTheme === 'dark');
+  const isDark = systemTheme === 'dark';
 
-  useEffect(() => {
-    const loadTheme = async () => {
-      const storedTheme = await AsyncStorage.getItem('theme');
-      if (storedTheme) {
-        setIsDark(storedTheme === 'dark');
-      } else {
-        setIsDark(systemTheme === 'dark');
-      }
-    };
-    loadTheme();
-  }, [systemTheme]);
+  const theme = isDark ? darkTheme : lightTheme;
 
-  // theme에 globalPalette 추가
-  const theme = {...(isDark ? darkTheme : lightTheme), global: globalTheme};
-
-  const toggleTheme = async () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    await AsyncStorage.setItem('theme', newIsDark ? 'dark' : 'light');
-  };
-
-  return <ThemeContext.Provider value={{theme, isDark, typography: Typography, toggleTheme}}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{theme, isDark, typography: Typography}}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = () => useContext(ThemeContext);

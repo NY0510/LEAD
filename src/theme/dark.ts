@@ -1,15 +1,15 @@
-import {Palette} from '@/theme/types/Palette';
+import Palette from '@/theme/types/Palette';
 
 const dark: Palette = {
-  background: '#F3F5F6',
-  primary: '#0065FF',
-  secondary: '#767676',
-  inactive: '#C6CED1',
-  text: '#1D1F1F',
-  card: '#FF0000', // TODO
-  border: '#FF0000', // TODO
-  shadow: '#C6CED1',
-  red: '#FF7171',
+  background: '#ff0000',
+  primary: '#ff0000',
+  secondary: '#ff0000',
+  inactive: '#ff0000',
+  text: '#ff0000',
+  card: '#ff0000', // TODO
+  border: '#ff0000', // TODO
+  shadow: '#ff0000',
+  red: '#ff0000',
 };
 
 export default dark;

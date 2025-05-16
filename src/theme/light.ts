@@ -1,4 +1,4 @@
-import {Palette} from '@/theme/types/Palette';
+import Palette from '@/theme/types/Palette';
 
 const light: Palette = {
   background: '#F3F5F6',

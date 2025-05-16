@@ -1,27 +1,27 @@
 import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {
+  rootContainer: {
     gap: 22,
   },
-  headerRow: {
+  headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
   },
-  headerTextWrap: {
+  headerTextContainer: {
     flexWrap: 'wrap',
   },
-  headerName: {
+  headerTitle: {
     fontWeight: '600',
   },
-  headerSub: {},
-  headerImage: {
+  headerSubtitle: {},
+  headerAvatar: {
     width: 64,
     height: 64,
   },
-  memoTouchable: {
+  memoButton: {
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 16,
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  memoArrow: {
+  memoArrowIndicator: {
     borderLeftWidth: 15,
     borderRightWidth: 15,
     borderBottomWidth: 20,
@@ -40,27 +40,27 @@ const styles = StyleSheet.create({
     top: -20,
     right: 20,
   },
-  memoText: {
+  memoLabel: {
     fontWeight: '600',
     flexShrink: 1,
   },
-  cardRow: {
+  cardActionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  studyTimeRow: {
+  studyTimeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  studyTimeText: {
+  studyTimeValue: {
     fontWeight: '600',
   },
-  studyTimeSub: {
+  studyTimeGoal: {
     fontWeight: '600',
   },
-  playButton: {
+  startStudyButton: {
     aspectRatio: 1,
     padding: 20,
     borderRadius: 16,
@@ -68,87 +68,89 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  progressRow: {
+  progressBarRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
   },
-  studyRoomRow: {
+  studyRoomList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
   },
-  studyRoomButton: {
+  studyRoomItem: {
     flexGrow: 1,
   },
-  studyRoomInner: {
+  studyRoomContent: {
     padding: 20,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
   },
-  studyRoomText: {
+  studyRoomLabel: {
     fontWeight: '600',
   },
-  bottomSheetContent: {
+  bottomSheetContainer: {
     padding: 24,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     alignItems: 'center',
     gap: 16,
   },
-  bottomSheetTitle: {
+  bottomSheetHeader: {
     fontWeight: '700',
-    alignSelf: 'flex-start',
     fontSize: 20,
-    marginBottom: 8,
   },
-  timerPickerWrap: {
+  bottomSheetSubtitle: {
+    fontWeight: '400',
+    fontSize: 16,
+  },
+  timerPickerContainer: {
     width: '100%',
     borderRadius: 12,
     paddingVertical: 8,
     alignItems: 'center',
     marginBottom: 8,
   },
-  saveButton: {
+  saveActionButton: {
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 32,
     alignSelf: 'stretch',
     alignItems: 'center',
   },
-  saveButtonText: {
+  saveActionLabel: {
     fontWeight: '600',
   },
-  todayStudyWrap: {
+  todayStudyContainer: {
     gap: 8,
   },
-  todayStudyLegendRow: {
+  todayStudyLegendList: {
     flexDirection: 'row',
     gap: 12,
   },
-  todayStudyLegendItemBlue: {
+  todayStudyLegendItemPrimary: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  todayStudyLegendCircleBlue: {
+  todayStudyLegendCirclePrimary: {
     width: 15,
     height: 15,
     borderColor: '#344BFD',
     borderWidth: 3,
     borderRadius: 7.5,
   },
-  todayStudyLegendItemOrange: {
+  todayStudyLegendItemSecondary: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  todayStudyLegendCircleOrange: {
+  todayStudyLegendCircleSecondary: {
     width: 15,
     height: 15,
     borderColor: '#EE902C',

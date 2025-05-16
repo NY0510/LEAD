@@ -21,6 +21,7 @@ const RootStacks = () => {
   const {theme, typography} = useTheme();
 
   if (initializing) {
+    // 나중에 스플레시 숨기기로 변경
     return <Loading fullScreen />;
   }
 

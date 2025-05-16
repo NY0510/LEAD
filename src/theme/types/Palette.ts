@@ -10,9 +10,4 @@ interface Palette {
   red: string;
 }
 
-interface GlobalPalette {
-  white: string;
-  black: string;
-}
-
-export type {Palette, GlobalPalette};
+export default Palette;

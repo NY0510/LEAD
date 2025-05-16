@@ -34,7 +34,7 @@ const ProgressBar = ({segments, height = 20, borderRadius = 8, showLabels = fals
     },
     label: {
       ...typography.baseTextStyle,
-      color: theme.global.white,
+      color: '#fff',
       fontSize: 14,
       fontWeight: '600',
     },

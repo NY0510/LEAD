@@ -1,17 +1,20 @@
-import React from 'react';
-import {Text, View} from 'react-native';
+import React, {Fragment} from 'react';
+import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 
+import ProfileSection from './components/ProfileSection';
+import Card from '@/components/Card';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 
 const Setting = () => {
-  const {user, signOut} = useAuth();
-  const {theme, typography} = useTheme();
-
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={[typography.title]}>설정 화면</Text>
-    </View>
+    <Fragment>
+      <ScrollView contentContainerStyle={{padding: 18}}>
+        <View style={{gap: 22}}>
+          <ProfileSection />
+        </View>
+      </ScrollView>
+    </Fragment>
   );
 };
 

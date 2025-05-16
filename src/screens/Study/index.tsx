@@ -48,18 +48,18 @@ const Study = () => {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18, gap: 22}}>
       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 16}}>
-        <View style={{flex: 1, backgroundColor: theme.global.white, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
+        <View style={{flex: 1, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
           <View>
             <Text style={[typography.subtitle, {color: theme.primary, fontWeight: 700}]}>공부 시간</Text>
-            <Text style={[typography.baseTextStyle, {fontSize: 32, fontWeight: 700, color: theme.secondary}]}>02:00:31</Text>
+            <Text style={[typography.baseTextStyle, {fontSize: 32, fontWeight: '600', color: theme.secondary}]}>02:00:31</Text>
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.subtitle, {color: theme.primary, fontWeight: 700}]}>집중도</Text>
-            <Text style={[typography.baseTextStyle, {fontSize: 32, fontWeight: 700, color: theme.secondary}]}>80%</Text>
+            <Text style={[typography.baseTextStyle, {fontSize: 32, fontWeight: '600', color: theme.secondary}]}>80%</Text>
           </View>
         </View>
         <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
-          <View style={{backgroundColor: theme.global.white, padding: 20, borderRadius: 999, aspectRatio: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{backgroundColor: '#fff', padding: 20, borderRadius: 999, aspectRatio: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
             <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
           </View>
         </TouchableOpacity>

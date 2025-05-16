@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
+import {signup} from '@/api';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
@@ -11,14 +12,16 @@ GoogleSignin.configure({
 type Props = {
   user: FirebaseAuthTypes.User | null;
   initializing: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => Promise<FirebaseAuthTypes.User | null>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<Props>({
   user: null,
   initializing: true,
-  signInWithGoogle: async () => {},
+  signInWithGoogle: async () => {
+    return null;
+  },
   signOut: async () => {},
 });
 
@@ -46,13 +49,15 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
       await GoogleSignin.hasPlayServices();
       const result = await GoogleSignin.signIn();
       if (result.type === 'cancelled') {
-        return;
+        return null;
       }
 
       const {idToken} = await GoogleSignin.getTokens();
-
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      await auth().signInWithCredential(googleCredential);
+      const userCredential = await auth().signInWithCredential(googleCredential);
+      await signup(userCredential.user.uid);
+
+      return userCredential.user;
     } catch (error) {
       console.error(`[AuthProvider] Error signing in with Google: ${error}`);
       throw error;
@@ -63,6 +68,8 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     await GoogleSignin.signOut();
     await auth().signOut();
   };
+
+  // signOut();
 
   return <AuthContext.Provider value={{user, initializing, signInWithGoogle, signOut}}>{children}</AuthContext.Provider>;
 };
