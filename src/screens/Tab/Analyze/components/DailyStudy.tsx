@@ -3,6 +3,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
 import {useTheme} from '@/contexts/ThemeContext';
+import {getData} from '@/lib/parseData';
 import {calcPer} from '@/lib/persentage';
 import {formatTime} from '@/lib/timeUtils';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
@@ -12,6 +13,8 @@ const DailyStudy = () => {
   const [trueStudyHour, setTrueStudyHour] = useState(80);
   const [exceptionalHour, setExceptionalHour] = useState(60);
   const [totalHour, setTotalHour] = useState(trueStudyHour + exceptionalHour);
+  const [startDate, setStartDate] = useState<string>('250416'); // 조회할 시작 날짜
+  const [endDate, setEndDate] = useState<string>('250420'); // 조회할 끝 날짜
 
   const pieData = [
     {value: trueStudyHour, color: '#EE902C'},

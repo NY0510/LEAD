@@ -60,8 +60,8 @@ const WeeklyStudy = () => {
               <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>9시간 14분</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>55%</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>9시간 14분</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>55%</Text>
             </View>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
