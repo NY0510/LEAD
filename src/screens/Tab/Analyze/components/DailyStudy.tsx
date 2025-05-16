@@ -12,9 +12,17 @@ const DailyStudy = () => {
   const {theme, typography} = useTheme();
   const [trueStudyHour, setTrueStudyHour] = useState(80);
   const [exceptionalHour, setExceptionalHour] = useState(60);
-  const [totalHour, setTotalHour] = useState(trueStudyHour + exceptionalHour);
+  const [totalHour, setTotalHour] = useState();
   const [startDate, setStartDate] = useState<string>('250416'); // 조회할 시작 날짜
   const [endDate, setEndDate] = useState<string>('250420'); // 조회할 끝 날짜
+
+  const fetchData = async () => {
+    const data = await getData(startDate, endDate); // getData 함수에서 반환하는 데이터
+
+    // 각 필드별 데이터를 상태로 저장
+    setTrueStudyHour(data.trueStudiedHour); // trueStudiedHour를 trueData에 저장
+    setExceptionalHour(data.exceptionalHour); // exceptionalHour를 exData에 저장
+  };
 
   const pieData = [
     {value: trueStudyHour, color: '#EE902C'},
