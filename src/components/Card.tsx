@@ -14,7 +14,7 @@ const Card: React.FC<CardProps> = ({title, style, titleStyle, children}) => {
   const {theme, typography} = useTheme();
 
   return (
-    <View style={[{backgroundColor: '#fff', borderRadius: 16, padding: 16, justifyContent: 'space-between', gap: 16}, style]}>
+    <View style={[{backgroundColor: theme.card, borderRadius: 16, padding: 16, justifyContent: 'space-between', gap: 16}, style]}>
       {title && (
         <View>
           <Text style={[typography.subtitle, {color: theme.primary, fontWeight: '600'}, titleStyle]}>{title}</Text>

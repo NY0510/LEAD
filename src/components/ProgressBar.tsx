@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View, ViewStyle} from 'react-native';
 
 import {useTheme} from '@/contexts/ThemeContext';
+import {toDP} from '@/theme/typography';
 
 type Segment = {
   value: number;
@@ -34,8 +35,8 @@ const ProgressBar = ({segments, height = 20, borderRadius = 8, showLabels = fals
     },
     label: {
       ...typography.baseTextStyle,
-      color: '#fff',
-      fontSize: 14,
+      color: theme.text,
+      fontSize: toDP(14),
       fontWeight: '600',
     },
   });

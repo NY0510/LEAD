@@ -4,6 +4,7 @@ import {BarChart} from 'react-native-gifted-charts';
 
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
+import {toDP} from '@/theme/typography';
 
 const Home = () => {
   const {user, signOut} = useAuth();
@@ -77,7 +78,7 @@ const Home = () => {
                 <Text
                   style={{
                     color: theme.text,
-                    fontSize: 12,
+                    fontSize: toDP(12),
                     fontWeight: '500',
                   }}>
                   {item.stacks.map((stack: any) => stack.value).reduce((a: number, b: number) => a + b, 0)} 분

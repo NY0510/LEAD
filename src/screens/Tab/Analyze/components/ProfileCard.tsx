@@ -11,7 +11,7 @@ const ProfileCard = () => {
   const [focusedAvg, setFocusedAvg] = useState(0);
 
   return (
-    <View style={{backgroundColor: '#fff', borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12}}>
+    <View style={{backgroundColor: theme.card, borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12}}>
       <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
       <View style={{flexShrink: 1}}>
         <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>{user?.displayName}</Text>

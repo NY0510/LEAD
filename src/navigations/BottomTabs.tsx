@@ -8,6 +8,7 @@ import Analyze from '@/screens/Tab/Analyze';
 import Home from '@/screens/Tab/Home';
 import Setting from '@/screens/Tab/Setting';
 import StudyRoom from '@/screens/Tab/StudyRoom';
+import {toDP} from '@/theme/typography';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -35,7 +36,7 @@ const BottomTabs = () => {
         },
         headerStatusBarHeight: 0,
         headerTitleAlign: 'left',
-        headerTitleStyle: [typography.body, {color: theme.text, fontWeight: '500', fontSize: 20}],
+        headerTitleStyle: [typography.body, {color: theme.text, fontWeight: '500', fontSize: toDP(20)}],
         headerStyle: {
           height: 48,
           backgroundColor: theme.background,
@@ -45,7 +46,7 @@ const BottomTabs = () => {
         },
         tabBarActiveTintColor: theme.text,
         tabBarInactiveTintColor: theme.inactive,
-        tabBarLabelStyle: [typography.body, {fontSize: 12, lineHeight: 15}],
+        tabBarLabelStyle: [typography.body, {fontSize: toDP(12), lineHeight: toDP(15)}],
         tabBarButton: props => (props.onPress ? <TabBarButton children={props.children} onPress={event => props.onPress && props.onPress(event!)} /> : null),
         tabBarIcon: props => <TabBarIcon route={route} size={20} color={props.color} />,
       })}>

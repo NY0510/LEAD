@@ -32,7 +32,7 @@ const Login = () => {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-between', paddingVertical: 24, backgroundColor: theme.background}}>
       <View />
-      <View>{isDark ? <LogoDarkSvg /> : <LogoLightSvg />}</View>
+      <View>{isDark ? <LogoLightSvg /> : <LogoDarkSvg />}</View>
       <View style={{width: '100%'}}>
         <TouchableScale onPress={handleSignIn}>
           <View
@@ -43,7 +43,7 @@ const Login = () => {
               padding: 18,
               marginHorizontal: 24,
               gap: 8,
-              backgroundColor: '#fff',
+              backgroundColor: theme.card,
               borderRadius: 12,
               shadowColor: theme.shadow,
               shadowOffset: {width: 0, height: 2},

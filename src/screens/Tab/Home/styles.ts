@@ -1,5 +1,7 @@
 import {StyleSheet} from 'react-native';
 
+import {toDP} from '@/theme/typography';
+
 const styles = StyleSheet.create({
   rootContainer: {
     gap: 22,
@@ -103,11 +105,11 @@ const styles = StyleSheet.create({
   },
   bottomSheetHeader: {
     fontWeight: '700',
-    fontSize: 20,
+    fontSize: toDP(20),
   },
   bottomSheetSubtitle: {
     fontWeight: '400',
-    fontSize: 16,
+    fontSize: toDP(16),
   },
   timerPickerContainer: {
     width: '100%',

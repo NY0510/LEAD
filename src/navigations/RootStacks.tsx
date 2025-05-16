@@ -7,6 +7,7 @@ import {useTheme} from '@/contexts/ThemeContext';
 import BottomTabs from '@/navigations/BottomTabs';
 import Login from '@/screens/Login';
 import Study from '@/screens/Study';
+import DeveloperInfo from '@/screens/Tab/Setting/components/DeveloperInfo';
 import {createStaticNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -14,6 +15,7 @@ export type RootStackParamList = {
   Login: undefined;
   Tab: undefined;
   Study: undefined;
+  DeveloperInfo: undefined;
 };
 
 const RootStacks = () => {
@@ -49,6 +51,7 @@ const RootStacks = () => {
       Login: Login,
       Tab: BottomTabs,
       Study: Study,
+      DeveloperInfo: DeveloperInfo,
     },
   });
   const Stack = createStaticNavigation(RootStack);

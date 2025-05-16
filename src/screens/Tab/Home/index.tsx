@@ -131,8 +131,8 @@ const Home = () => {
           </View>
 
           <TouchableOpacity activeOpacity={0.7} onPress={() => openBottomSheet(memoBottomSheetRef)}>
-            <View style={[{borderRadius: 16, paddingHorizontal: 14, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}, {backgroundColor: '#fff'}]}>
-              <View style={[{borderLeftWidth: 15, borderRightWidth: 15, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', position: 'absolute', top: -20, right: 20}, {borderBottomColor: '#fff'}]} />
+            <View style={[{borderRadius: 16, paddingHorizontal: 14, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}, {backgroundColor: theme.card}]}>
+              <View style={[{borderLeftWidth: 15, borderRightWidth: 15, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', position: 'absolute', top: -20, right: 20}, {borderBottomColor: theme.card}]} />
               {memoLoading || refreshing ? (
                 <SkeletonPlaceholder borderRadius={8}>
                   <SkeletonPlaceholder.Item width={300} height={20} />
@@ -233,8 +233,8 @@ const Home = () => {
         </View>
       </ScrollView>
 
-      <BottomSheet backdropComponent={renderBackdrop} ref={studyTimeBottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
-        <BottomSheetView style={[{padding: 24, borderTopLeftRadius: 16, borderTopRightRadius: 16, alignItems: 'center', gap: 16}, {backgroundColor: '#fff'}]}>
+      <BottomSheet backdropComponent={renderBackdrop} ref={studyTimeBottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: theme.card, borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
+        <BottomSheetView style={[{padding: 24, borderTopLeftRadius: 16, borderTopRightRadius: 16, alignItems: 'center', gap: 16}, {backgroundColor: theme.card}]}>
           <View style={{alignSelf: 'flex-start', gap: 4}}>
             <Text style={[typography.subtitle, {fontWeight: '700', fontSize: 20}, {color: theme.text}]}>목표 공부 시간 변경</Text>
             <Text style={[typography.body, {fontWeight: '400', fontSize: 16}, {color: theme.text}]}>공부를 시작한 이후에 변경할 시 공부 시간이 초기화돼요.</Text>
@@ -280,13 +280,13 @@ const Home = () => {
               setGoal(user!.uid, newGoal);
               studyTimeBottomSheetRef.current?.close();
             }}>
-            <Text style={[typography.body, {color: '#fff'}, {fontWeight: '600'}]}>저장</Text>
+            <Text style={[typography.body, {color: theme.card}, {fontWeight: '600'}]}>저장</Text>
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
 
-      <BottomSheet backdropComponent={renderBackdrop} ref={memoBottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
-        <BottomSheetView style={[{padding: 24, borderTopLeftRadius: 16, borderTopRightRadius: 16, alignItems: 'center', gap: 16}, {backgroundColor: '#fff'}]}>
+      <BottomSheet backdropComponent={renderBackdrop} ref={memoBottomSheetRef} index={-1} enablePanDownToClose backgroundStyle={{backgroundColor: theme.card, borderTopLeftRadius: 16, borderTopRightRadius: 16}} handleIndicatorStyle={{backgroundColor: theme.inactive}}>
+        <BottomSheetView style={[{padding: 24, borderTopLeftRadius: 16, borderTopRightRadius: 16, alignItems: 'center', gap: 16}, {backgroundColor: theme.card}]}>
           <Text style={[typography.subtitle, {color: theme.text}, {fontWeight: '700', fontSize: 20}]}>메모 입력</Text>
           <View style={{flex: 1, width: '100%'}}>
             <BottomSheetTextInput
@@ -319,7 +319,7 @@ const Home = () => {
               Keyboard.dismiss();
               memoBottomSheetRef.current?.close();
             }}>
-            <Text style={[typography.body, {color: '#fff'}, {fontWeight: '600'}]}>저장</Text>
+            <Text style={[typography.body, {color: theme.card}, {fontWeight: '600'}]}>저장</Text>
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>

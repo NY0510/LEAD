@@ -3,6 +3,7 @@ import {Text, View} from 'react-native';
 import {BarChart, PieChart, pieDataItem, stackDataItem} from 'react-native-gifted-charts';
 
 import {useTheme} from '@/contexts/ThemeContext';
+import {toDP} from '@/theme/typography';
 
 interface Props {
   pieData?: pieDataItem[];
@@ -53,7 +54,7 @@ const Chart = ({pieData, barData, chartType}: Props) => {
                   borderRadius: 8,
                   borderColor: theme.primary,
                 }}>
-                <Text style={[typography.baseTextStyle, {color: theme.text, fontSize: 12, fontWeight: '500'}]}>{item.stacks.map((stack: any) => stack.value).reduce((a: number, b: number) => a + b, 0)} 분</Text>
+                <Text style={[typography.baseTextStyle, {color: theme.text, fontSize: toDP(12), fontWeight: '500'}]}>{item.stacks.map((stack: any) => stack.value).reduce((a: number, b: number) => a + b, 0)} 분</Text>
               </View>
             );
           }}
