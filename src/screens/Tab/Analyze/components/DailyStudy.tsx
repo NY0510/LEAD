@@ -10,18 +10,19 @@ import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const DailyStudy = () => {
   const {theme, typography} = useTheme();
-  const [trueStudyHour, setTrueStudyHour] = useState(80);
-  const [exceptionalHour, setExceptionalHour] = useState(60);
-  const [totalHour, setTotalHour] = useState();
-  const [startDate, setStartDate] = useState<string>('250416'); // 조회할 시작 날짜
-  const [endDate, setEndDate] = useState<string>('250420'); // 조회할 끝 날짜
+  const [trueStudyHour, setTrueStudyHour] = useState<number>(0);
+  const [exceptionalHour, setExceptionalHour] = useState<number>(0);
+  const [totalHour, setTotalHour] = useState<number>(0);
+  const [startDate, setStartDate] = useState<string>('250509'); // 조회할 시작 날짜
+  const [endDate, setEndDate] = useState<string>('250516'); // 조회할 끝 날짜
 
   const fetchData = async () => {
     const data = await getData(startDate, endDate); // getData 함수에서 반환하는 데이터
 
     // 각 필드별 데이터를 상태로 저장
-    setTrueStudyHour(data.trueStudiedHour); // trueStudiedHour를 trueData에 저장
-    setExceptionalHour(data.exceptionalHour); // exceptionalHour를 exData에 저장
+    setTrueStudyHour(data.trueStudiedHour[6]); // trueStudiedHour를 trueData에 저장
+    setExceptionalHour(data.exceptionalHour[6]); // exceptionalHour를 exData에 저장
+    setTotalHour(trueStudyHour + exceptionalHour);
   };
 
   const pieData = [
