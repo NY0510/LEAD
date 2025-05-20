@@ -14,7 +14,7 @@ const AppInfoSection = () => {
   const {typography} = useTheme();
 
   const reportBug = async () => {
-    const title = '[NYL 버그 및 건의사항] ';
+    const title = '[LEAD 버그 및 건의사항] ';
     const body = `디바이스 정보:
 OS: ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}
 Device Name: ${await DeviceInfo.getDeviceName()}
@@ -25,7 +25,7 @@ Build Date: ${buildDate.format('YYYY년 M월 D일')}
 === 이 아래에 본문 내용을 작성해주세요. ===\n\n`;
 
     const emailData = {
-      to: 'support@ny64.kr',
+      to: 'lead-support@ny64.kr',
       subject: title,
       body: body,
     };
@@ -37,7 +37,7 @@ Build Date: ${buildDate.format('YYYY년 M월 D일')}
       },
       {
         text: 'GitHub 이슈로 보내기',
-        onPress: () => Linking.openURL(`https://github.com/NY0510/slunchv2/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(emailData.body)}&labels=bug`),
+        onPress: () => Linking.openURL(`https://github.com/NY0510/lead/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(emailData.body)}&labels=bug`),
       },
       {
         text: '취소',

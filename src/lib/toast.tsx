@@ -2,10 +2,10 @@ import React from 'react';
 import {Dimensions, Text, View} from 'react-native';
 import Toast, {ToastConfig} from 'react-native-toast-message';
 
-import {GlobalPalette, Palette} from '@/theme/types/Palette';
+import Palette from '@/theme/types/Palette';
 import TextStyles from '@/theme/types/TextStyles';
 
-export const getToastConfig = (theme: Palette & {global: GlobalPalette}, typography: TextStyles): ToastConfig => ({
+export const getToastConfig = (theme: Palette, typography: TextStyles): ToastConfig => ({
   customToast: ({text1}: {text1?: string}) => (
     <View
       style={{
@@ -14,8 +14,8 @@ export const getToastConfig = (theme: Palette & {global: GlobalPalette}, typogra
         alignItems: 'center',
         marginTop: 24,
         width: Dimensions.get('window').width - 30,
-        backgroundColor: theme.background,
-        borderColor: theme.primary,
+        backgroundColor: theme.card,
+        borderColor: theme.border,
         borderWidth: 1,
         padding: 14,
         borderRadius: 18,

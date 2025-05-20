@@ -1,6 +1,5 @@
 import httpClient from './httpClient';
 
-// 회원가입
 export const signup = async (uid: string) => {
   try {
     const r = await httpClient.post('/users/signup', {uid});
@@ -97,6 +96,97 @@ export const updateStudy = async (uid: string, is_studying: boolean) => {
     return r.data;
   } catch (error) {
     console.error('Error during updateStudy:', error);
+    throw error;
+  }
+};
+
+// 공부방 목록 조회
+export const getStudyRooms = async () => {
+  try {
+    const r = await httpClient.get('/studyrooms');
+    return r.data;
+  } catch (error) {
+    console.error('Error during getStudyRooms:', error);
+    throw error;
+  }
+};
+
+// 공부방 생성
+export const createStudyRoom = async (uid: string, name: string) => {
+  try {
+    const r = await httpClient.post('/stdyrooms/create', {
+      name,
+      owner_uid: uid,
+    });
+    return r.data;
+  } catch (error) {
+    console.error('Error during createStudyRoom:', error);
+    throw error;
+  }
+};
+
+// 공부방 삭제
+export const deleteStudyRoom = async (uid: string, room_id: string) => {
+  try {
+    const r = await httpClient.post(`/stdyrooms/${room_id}/delete`, {
+      uid: uid,
+    });
+    return r.data;
+  } catch (error) {
+    console.error('Error during deleteStudyRoom:', error);
+    throw error;
+  }
+};
+
+// 공부방 나가기
+export const leaveStudyRoom = async (uid: string, room_id: string) => {
+  try {
+    const r = await httpClient.post(`/stdyrooms/${room_id}/leave`, {
+      uid: uid,
+    });
+    return r.data;
+  } catch (error) {
+    console.error('Error during leaveStudyRoom:', error);
+    throw error;
+  }
+};
+
+// 내 공부방 목록 조회
+export const getMyStudyRooms = async (uid: string) => {
+  try {
+    const r = await httpClient.get(`/users/${uid}/stdyrooms`);
+    return r.data;
+  } catch (error) {
+    console.error('Error during getMyStudyRooms:', error);
+    throw error;
+  }
+};
+
+// 공부방 참가
+export const joinStudyRoom = async (uid: string, room_id: string) => {
+  try {
+    const r = await httpClient.post(`/stdyrooms/${room_id}/join`, {
+      uid: uid,
+    });
+    return r.data;
+  } catch (error) {
+    console.error('Error during joinStudyRoom:', error);
+    throw error;
+  }
+};
+
+// 공부방 수정
+export const updateStudyRoom = async (uid: string, room_id: string, name: string, cover_image: string, description: string) => {
+  try {
+    const r = await httpClient.post(`/stdyrooms/${room_id}/update`, {
+      uid,
+      name,
+      cover_image,
+      description,
+    });
+    return r.data;
+  } catch (error) {
+    console.error('Error during updateStudyRoom:', error);
     throw error;
   }
 };

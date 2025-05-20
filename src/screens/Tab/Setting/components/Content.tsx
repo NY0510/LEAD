@@ -10,10 +10,10 @@ const Content = ({title, content, arrow, arrowText, onPress, disabled}: {title: 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={onPress ? 0.7 : 1} disabled={disabled}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <Text style={[typography.body, {color: disabled ? theme.secondaryText : theme.primaryText}]}>{title}</Text>
+        <Text style={[typography.body, {color: disabled ? theme.secondary : theme.text}]}>{title}</Text>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8}}>
-          <Text style={[typography.body, {color: theme.secondaryText}]}>{arrowText}</Text>
-          {arrow ? <FontAwesome6 name="angle-right" iconStyle="solid" size={16} color={theme.secondaryText} /> : <Text style={[typography.body, {color: theme.secondaryText}]}>{content}</Text>}
+          <Text style={[typography.body, {color: theme.secondary}]}>{arrowText}</Text>
+          {arrow ? <FontAwesome6 name="angle-right" iconStyle="solid" size={16} color={theme.secondary} /> : <Text style={[typography.body, {color: theme.secondaryText}]}>{content}</Text>}
         </View>
       </View>
     </TouchableOpacity>

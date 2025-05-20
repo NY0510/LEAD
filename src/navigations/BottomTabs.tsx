@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
-import {GestureResponderEvent, TouchableOpacity} from 'react-native';
+import React, {useEffect} from 'react';
+import {GestureResponderEvent, Linking, TouchableOpacity} from 'react-native';
 
 import TouchableScale from '@/components/TouchableScale';
 import {useTheme} from '@/contexts/ThemeContext';
@@ -9,13 +9,31 @@ import Home from '@/screens/Tab/Home';
 import Setting from '@/screens/Tab/Setting';
 import StudyRoom from '@/screens/Tab/StudyRoom';
 import {toDP} from '@/theme/typography';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-const BottomTab = createBottomTabNavigator();
+const BottomTab = createBottomTabNavigator<BottomTabParamList>();
+
+export type BottomTabParamList = {
+  Home: undefined;
+  Analyze: undefined;
+  StudyRoom: undefined;
+  Setting: undefined;
+};
 
 const BottomTabs = () => {
   const {theme, typography} = useTheme();
+
+  useEffect(() => {
+    (async () => {
+      const openedDeepLinkUrl = await AsyncStorage.getItem('openedDeepLinkUrl');
+      if (openedDeepLinkUrl) {
+        Linking.openURL(openedDeepLinkUrl);
+        await AsyncStorage.removeItem('openedDeepLinkUrl');
+      }
+    })();
+  }, []);
 
   return (
     <BottomTab.Navigator

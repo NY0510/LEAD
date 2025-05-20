@@ -13,7 +13,7 @@ const ProfileSection = () => {
 
   return (
     <View style={{alignItems: 'center', justifyContent: 'center', gap: 12}}>
-      <Image src={user?.photoURL!} style={{width: 120, height: 120, backgroundColor: theme.border}} borderRadius={120 / 2} />
+      <Image source={{uri: user?.photoURL!, cache: 'force-cache'}} style={{width: 120, height: 120, backgroundColor: theme.border}} borderRadius={120 / 2} />
       <View style={{alignItems: 'center', justifyContent: 'center'}}>
         <Text style={{color: theme.text, fontWeight: '700', fontSize: toDP(24)}}>{user ? user.displayName : '게스트'}</Text>
         <Text style={{color: theme.secondary, fontWeight: '500', fontSize: toDP(16)}}>{user ? user.email : '로그인해 주세요'}</Text>
@@ -39,7 +39,9 @@ const ProfileSection = () => {
                 justifyContent: 'center',
                 backgroundColor: theme.card,
                 borderRadius: 12,
-                paddingVertical: 8,
+                borderWidth: 1,
+                borderColor: theme.border,
+                paddingVertical: 12,
               }}>
               <Text style={{color: theme.text, fontWeight: '700', fontSize: toDP(Number(typography.body.fontSize))}}>로그아웃</Text>
             </View>

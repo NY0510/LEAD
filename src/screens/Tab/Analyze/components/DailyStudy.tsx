@@ -10,8 +10,8 @@ import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const DailyStudy = () => {
   const {theme, typography} = useTheme();
-  const [trueStudyHour, setTrueStudyHour] = useState<number>(0);
-  const [exceptionalHour, setExceptionalHour] = useState<number>(0);
+  const [trueStudyHour, setTrueStudyHour] = useState<number>(10);
+  const [exceptionalHour, setExceptionalHour] = useState<number>(10);
   const [totalHour, setTotalHour] = useState<number>(0);
   const [startDate, setStartDate] = useState<string>('250509'); // 조회할 시작 날짜
   const [endDate, setEndDate] = useState<string>('250516'); // 조회할 끝 날짜
@@ -33,14 +33,14 @@ const DailyStudy = () => {
   return (
     <View style={{gap: 12}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
+        <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
           <FontAwesome6 name="angle-left" size={22} color={theme.text} iconStyle="solid" />
         </TouchableOpacity>
         <View style={{flexDirection: 'column', alignItems: 'center', gap: 4}}>
           <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>일간 공부 시간</Text>
           <Text style={[typography.body, {color: theme.text}]}>2025. 05. 01</Text>
         </View>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
+        <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
           <FontAwesome6 name="angle-right" size={22} color={theme.text} iconStyle="solid" />
         </TouchableOpacity>
       </View>

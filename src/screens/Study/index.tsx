@@ -59,7 +59,7 @@ const Study = () => {
             <Text style={[typography.baseTextStyle, {fontSize: toDP(32), fontWeight: '600', color: theme.secondary}]}>80%</Text>
           </View>
         </View>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
+        <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
           <View style={{backgroundColor: theme.card, padding: 20, borderRadius: 999, aspectRatio: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
             <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
           </View>

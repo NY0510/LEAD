@@ -1,6 +1,6 @@
 import {API_BASE_URL} from '@env';
 import React from 'react';
-import {ImageBackground, Text, View} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
 import Card from '@/components/Card';
@@ -12,7 +12,7 @@ const DeveloperCard = ({name, roles, profileImage}: {name: string; roles: string
 
   return (
     <View style={{flexDirection: 'row', alignContent: 'center', gap: 10}}>
-      <ImageBackground src={profileImage} style={{width: 48, height: 48, backgroundColor: theme.border, borderRadius: 48 / 2}} />
+      <Image source={{uri: profileImage, cache: 'force-cache'}} borderRadius={48 / 2} style={{width: 48, height: 48, backgroundColor: theme.border, borderRadius: 48 / 2}} />
       <View style={{justifyContent: 'center', gap: 4}}>
         <Text style={[typography.body, {color: theme.text, fontWeight: '600'}]}>{name}</Text>
         <Text style={[typography.body, {color: theme.secondary, fontSize: toDP(14)}]}>{roles.join(', ')}</Text>
@@ -37,10 +37,10 @@ const DeveloperCardList = ({title, developers}: {title: string; developers: {nam
 
 const DeveloperInfo = () => {
   const members = [
-    {name: '김가온', roles: ['Frontend', 'Backend', 'UI / UX Design'], profileImage: `${API_BASE_URL}/public/ny64.png`},
+    {name: '김가온', roles: ['Frontend', 'Backend', 'UI/UX Design'], profileImage: `${API_BASE_URL}/public/ny64.png`},
     {name: '김성태', roles: ['Frontend'], profileImage: `${API_BASE_URL}/public/ainnot.png`},
-    {name: '김정준', roles: ['AI, UI / UX Design'], profileImage: `${API_BASE_URL}/public/ainnot.png`},
-    {name: '김태경', roles: ['AI, UI / UX Design'], profileImage: `${API_BASE_URL}/public/ainnot.png`},
+    {name: '김정준', roles: ['AI Model, UI/UX Design'], profileImage: `${API_BASE_URL}/public/ba.png`},
+    {name: '김태경', roles: ['AI Model, UI/UX Design'], profileImage: `${API_BASE_URL}/public/croco.png`},
   ];
 
   return (

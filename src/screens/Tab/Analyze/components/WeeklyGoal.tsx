@@ -23,14 +23,14 @@ const WeeklyGoal = () => {
   return (
     <View style={{gap: 12}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
+        <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
           <FontAwesome6 name="angle-left" size={22} color={theme.text} iconStyle="solid" />
         </TouchableOpacity>
         <View style={{flexDirection: 'column', alignItems: 'center', gap: 4}}>
           <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>주간 목표 달성률</Text>
           <Text style={[typography.body, {color: theme.text}]}>2025. 03. 31 ~ 2025. 04. 07</Text>
         </View>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
+        <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
           <FontAwesome6 name="angle-right" size={22} color={theme.text} iconStyle="solid" />
         </TouchableOpacity>
       </View>
