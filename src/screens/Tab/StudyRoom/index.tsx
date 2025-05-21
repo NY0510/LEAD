@@ -1,41 +1,54 @@
 import React, {Fragment, useCallback, useEffect, useRef, useState} from 'react';
 import {Image, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import Share from 'react-native-share';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
-import {getStudyRooms} from '@/api';
+import {getMyStudyRooms} from '@/api';
 import Card from '@/components/Card';
 import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
 import FloatingActionButton from '@/components/FloatingActionButton';
+import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 import {openBottomSheet} from '@/lib/bottomSheetUtils';
 import {showToast} from '@/lib/toast';
+import {BottomTabParamList} from '@/navigations/BottomTabs';
 import {type StudyRoom as StudyRoomType} from '@/types/api';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 
 const StudyRoom = () => {
   const {theme, typography} = useTheme();
+  const {user} = useAuth();
+  const bottomTabNavigation = useNavigation<NavigationProp<BottomTabParamList>>();
 
   const [refreshing, setRefreshing] = useState(false);
   const [studyRooms, setStudyRooms] = useState<StudyRoomType[]>([]);
+  const [loading, setLoading] = useState(false);
   const [selectedStudyRoom, setSelectedStudyRoom] = useState<StudyRoomType | null>(null);
   const [cachedStudyRoomLength, setCachedStudyRoomLength] = useState(0);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const fetchStudyRooms = useCallback(async () => {
+    setLoading(true);
     try {
-      const r = await getStudyRooms();
+      const r = await getMyStudyRooms(user!.uid);
       setCachedStudyRoomLength(r.length);
       setStudyRooms(r);
+      setLoading(false);
     } catch (e) {
       return showToast(`공부방 목록을 가져오는데 실패했어요.\n${(e as Error).message}`);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     fetchStudyRooms();
-  }, [fetchStudyRooms]);
+  }, [fetchStudyRooms, user]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -43,8 +56,32 @@ const StudyRoom = () => {
     setRefreshing(false);
   }, [fetchStudyRooms]);
 
+  // 화면이 blur될 때 bottom sheet 닫기
+  useEffect(() => {
+    const unsubscribe = bottomTabNavigation.addListener('blur', () => {
+      bottomSheetRef.current?.close();
+    });
+    return unsubscribe;
+  }, [bottomTabNavigation]);
+
   const inviteStudyRoom = (studyRoom: StudyRoomType) => {
-    console.log('Invite Study Room:', studyRoom);
+    if (!user) {
+      return;
+    }
+
+    const inviterName = user.displayName || '알 수 없는 사용자';
+    const message = `📚 ${inviterName}님이 "${studyRoom.name}" 공부방에 초대했어요!
+
+벌써 ${studyRoom.participants.length}명이 같이 공부 중이에요!
+지금 바로 들어와서 같이 집중해봐요 🔥
+
+👇 참여 링크
+https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
+`;
+
+    Share.open({message})
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
   };
 
   const leaveStudyRoom = (studyRoom: StudyRoomType) => {
@@ -57,9 +94,9 @@ const StudyRoom = () => {
 
   return (
     <Fragment>
-      <ScrollView contentContainerStyle={{padding: 18, flexGrow: refreshing ? 1 : 0}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+      <ScrollView contentContainerStyle={{padding: 18, flexGrow: studyRooms.length === 0 ? 1 : 0}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
         <View style={{gap: 12, flex: 1, justifyContent: 'center'}}>
-          {refreshing || studyRooms.length === 0 ? (
+          {loading || refreshing ? (
             <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
               {Array.from({length: cachedStudyRoomLength || 5}).map((_, index) => (
                 <SkeletonPlaceholder.Item key={index} flexDirection="row" marginBottom={12}>
@@ -71,12 +108,12 @@ const StudyRoom = () => {
                 </SkeletonPlaceholder.Item>
               ))}
             </SkeletonPlaceholder>
-          ) : !studyRooms ? (
+          ) : studyRooms.length === 0 ? (
             <View style={{alignItems: 'center', justifyContent: 'center', flex: 1, gap: 12}}>
               <FontAwesome6 name="face-frown" iconStyle="regular" size={40} color={theme.inactive} />
               <View style={{alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={[typography.body, {color: theme.secondary}]}>아직 공부방이 없어요.</Text>
-                <Text style={[typography.body, {color: theme.secondary}]}>공부방을 만들어보세요!</Text>
+                <Text style={[typography.body, {color: theme.secondary}]}>공부방을 만들어보세요.</Text>
               </View>
             </View>
           ) : (

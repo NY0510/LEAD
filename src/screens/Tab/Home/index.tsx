@@ -3,7 +3,7 @@ import {Image, Keyboard, RefreshControl, ScrollView, Text, TouchableOpacity, Vie
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {TimerPicker, TimerPickerRef} from 'react-native-timer-picker';
 
-import {getGoal, getMemo, getStudyToday, setGoal, setMemo} from '@/api';
+import {getGoal, getMemo, getMyStudyRooms, getStudyToday, setGoal, setMemo} from '@/api';
 import Card from '@/components/Card';
 import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
 import Loading from '@/components/Loading';
@@ -14,8 +14,10 @@ import {useTheme} from '@/contexts/ThemeContext';
 import {openBottomSheet} from '@/lib/bottomSheetUtils';
 import {formatTime} from '@/lib/timeUtils';
 import {showToast} from '@/lib/toast';
+import {BottomTabParamList} from '@/navigations/BottomTabs';
 import {RootStackParamList} from '@/navigations/RootStacks';
 import {toDP} from '@/theme/typography';
+import {type StudyRoom as StudyRoomType} from '@/types/api';
 import BottomSheet, {BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
@@ -23,7 +25,8 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 const Home = () => {
   const {user} = useAuth();
   const {theme, typography} = useTheme();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const rootStackNavigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const bottomTabNavigation = useNavigation<NavigationProp<BottomTabParamList>>();
 
   const [goalStudyTime, setGoalStudyTime] = useState<number | null>(null); // 목표 공부 시간
   const [pureStudyTime, setPureStudyTime] = useState<number | null>(null); // 순 공부 시간
@@ -31,17 +34,18 @@ const Home = () => {
   const [totalStudyTime, setTotalStudyTime] = useState<number | null>(null); // 총 공부 시간
   const [achievement, setAchievement] = useState<number | null>(null); // 달성률
   const [memoState, setMemoState] = useState<string>(''); // 메모
+  const [studyRooms, setStudyRooms] = useState<StudyRoomType[]>([]); // 공부방 목록
 
+  const [refreshing, setRefreshing] = useState(false);
   const [studyTimeLoading, setStudyTimeLoading] = useState(true);
   const [memoLoading, setMemoLoading] = useState(true);
+  const [studyRoomLoading, setStudyRoomLoading] = useState(true);
 
   const [timePickerValue, setTimePickerValue] = useState({hours: 0, minutes: 0});
   const timerPickerRef = useRef<TimerPickerRef>(null);
 
   const studyTimeBottomSheetRef = useRef<BottomSheet>(null);
   const memoBottomSheetRef = useRef<BottomSheet>(null);
-
-  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -57,10 +61,6 @@ const Home = () => {
   }, [user?.uid]);
 
   const fetchTodayStudyData = useCallback(async () => {
-    if (!user?.uid) {
-      return;
-    }
-
     setStudyTimeLoading(true);
     try {
       const r = await getStudyToday(user!.uid);
@@ -75,10 +75,6 @@ const Home = () => {
   }, [user]);
 
   const fetchMemo = useCallback(async () => {
-    if (!user?.uid) {
-      return;
-    }
-
     setMemoLoading(true);
     try {
       const r = await getMemo(user!.uid);
@@ -89,20 +85,45 @@ const Home = () => {
     }
   }, [user]);
 
+  const fetchStudyRooms = useCallback(async () => {
+    setStudyRoomLoading(true);
+    try {
+      const r = await getMyStudyRooms(user!.uid);
+      setStudyRooms(r);
+      setStudyRoomLoading(false);
+    } catch (e) {
+      return showToast(`공부방 목록을 가져오는데 실패했어요.\n${(e as Error).message}`);
+    }
+  }, [user]);
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchTodayStudyData(), fetchMemo()]);
+    await Promise.all([fetchTodayStudyData(), fetchMemo(), fetchStudyRooms()]);
     setRefreshing(false);
-  }, [fetchTodayStudyData, fetchMemo]);
+  }, [fetchTodayStudyData, fetchMemo, fetchStudyRooms]);
 
   // 데이터 가져오기
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     fetchTodayStudyData();
     fetchMemo();
-  }, [fetchMemo, fetchTodayStudyData]);
+    fetchStudyRooms();
+  }, [fetchMemo, fetchStudyRooms, fetchTodayStudyData, user]);
 
   // 달성률 계산
   useEffect(() => setAchievement(goalStudyTime && pureStudyTime ? pureStudyTime / goalStudyTime : 0), [goalStudyTime, pureStudyTime]);
+
+  // 화면이 blur될 때 bottom sheet 닫기
+  useEffect(() => {
+    const unsubscribe = bottomTabNavigation.addListener('blur', () => {
+      studyTimeBottomSheetRef.current?.close();
+      memoBottomSheetRef.current?.close();
+    });
+    return unsubscribe;
+  }, [bottomTabNavigation]);
 
   return (
     <Fragment>
@@ -149,7 +170,7 @@ const Home = () => {
                     </View>
                   )}
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.65} onPress={() => navigation.navigate('Study')}>
+                <TouchableOpacity activeOpacity={0.65} onPress={() => rootStackNavigation.navigate('Study')}>
                   <TouchableScale>
                     <View style={[{aspectRatio: 1, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, {backgroundColor: theme.background}]}>
                       <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
@@ -175,15 +196,28 @@ const Home = () => {
 
           <Card title="내 공부방">
             <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12}}>
-              {Array.from({length: 3}, (_, i) => (
-                <TouchableOpacity key={i} activeOpacity={0.65} style={{flexGrow: 1}}>
-                  <TouchableScale>
-                    <View style={[{padding: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center', width: '100%'}, {backgroundColor: theme.background}]}>
-                      <Text style={[typography.body, {color: theme.text}, {fontWeight: '600'}]}>공부방 {i + 1}</Text>
-                    </View>
-                  </TouchableScale>
-                </TouchableOpacity>
-              ))}
+              {studyRoomLoading || refreshing ? (
+                <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                  <SkeletonPlaceholder.Item flexDirection="row" alignItems="center" justifyContent="space-between" gap={12}>
+                    <SkeletonPlaceholder.Item width={'100%'} height={80} borderRadius={12} />
+                  </SkeletonPlaceholder.Item>
+                </SkeletonPlaceholder>
+              ) : studyRooms.length === 0 ? (
+                <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+                  <Text style={[typography.body, {color: theme.secondary}]}>아직 공부방이 없어요.</Text>
+                  <Text style={[typography.body, {color: theme.secondary}]}>공부방을 만들어보세요.</Text>
+                </View>
+              ) : (
+                studyRooms.map((studyRoom, i) => (
+                  <TouchableOpacity key={i} activeOpacity={0.65} style={{flexGrow: 1}}>
+                    <TouchableScale>
+                      <View style={[{padding: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center', width: '100%'}, {backgroundColor: theme.background}]}>
+                        <Text style={[typography.body, {color: theme.text}, {fontWeight: '600'}]}>{studyRoom.name}</Text>
+                      </View>
+                    </TouchableScale>
+                  </TouchableOpacity>
+                ))
+              )}
             </View>
           </Card>
 

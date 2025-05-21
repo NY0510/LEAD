@@ -100,7 +100,7 @@ export const updateStudy = async (uid: string, is_studying: boolean) => {
   }
 };
 
-// 공부방 목록 조회
+// 전체 공부방 목록 조회
 export const getStudyRooms = async () => {
   try {
     const r = await httpClient.get('/studyrooms');
@@ -154,7 +154,7 @@ export const leaveStudyRoom = async (uid: string, room_id: string) => {
 // 내 공부방 목록 조회
 export const getMyStudyRooms = async (uid: string) => {
   try {
-    const r = await httpClient.get(`/users/${uid}/stdyrooms`);
+    const r = await httpClient.get(`/users/${uid}/studyrooms`);
     return r.data;
   } catch (error) {
     console.error('Error during getMyStudyRooms:', error);

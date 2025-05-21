@@ -1,9 +1,10 @@
 import axios from 'axios';
-import uid from 'somewhere';
+
+// import uid from 'somewhere';
 
 const API_BASE_URL = `'/user/${uid}/studies'`;
 
-export const getTodayData = async (): Promise<{ trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[] }> => {
+export const getTodayData = async (): Promise<{trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[]}> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/today`);
     const studyData = response.data;
@@ -15,12 +16,12 @@ export const getTodayData = async (): Promise<{ trueStudiedHour: number[]; excep
     };
   } catch (error) {
     console.error('Failed to fetch today study data:', error);
-    return { trueStudiedHour: [], exceptionalHour: [], goalHour: [] };
+    return {trueStudiedHour: [], exceptionalHour: [], goalHour: []};
   }
 };
 
 // 특정 날짜 공부 데이터 호출
-export const getSingleData = async (date: string): Promise<{ trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[] }> => {
+export const getSingleData = async (date: string): Promise<{trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[]}> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/studies/${date}`);
     const studyData = response.data;
@@ -32,15 +33,15 @@ export const getSingleData = async (date: string): Promise<{ trueStudiedHour: nu
     };
   } catch (error) {
     console.error(`Failed to fetch study data for ${date}:`, error);
-    return { trueStudiedHour: [], exceptionalHour: [], goalHour: [] };
+    return {trueStudiedHour: [], exceptionalHour: [], goalHour: []};
   }
 };
 
 // 특정 날짜 범위 공부 데이터 호출
-export const getWeekData = async (startDate: string, endDate: string): Promise<{ trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[] }> => {
+export const getWeekData = async (startDate: string, endDate: string): Promise<{trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[]}> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/study-range`, {
-      params: { startDate, endDate },
+      params: {startDate, endDate},
     });
     const studyData = response.data;
 
@@ -51,6 +52,6 @@ export const getWeekData = async (startDate: string, endDate: string): Promise<{
     };
   } catch (error) {
     console.error(`Failed to fetch study data for range (${startDate} to ${endDate}):`, error);
-    return { trueStudiedHour: [], exceptionalHour: [], goalHour: [] };
+    return {trueStudiedHour: [], exceptionalHour: [], goalHour: []};
   }
 };

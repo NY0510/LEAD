@@ -6,7 +6,7 @@ import TouchableScale from '@/components/TouchableScale';
 import {useTheme} from '@/contexts/ThemeContext';
 import Analyze from '@/screens/Tab/Analyze';
 import Home from '@/screens/Tab/Home';
-import Setting from '@/screens/Tab/Setting';
+import Myinfo from '@/screens/Tab/Myinfo';
 import StudyRoom from '@/screens/Tab/StudyRoom';
 import {toDP} from '@/theme/typography';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,7 +19,7 @@ export type BottomTabParamList = {
   Home: undefined;
   Analyze: undefined;
   StudyRoom: undefined;
-  Setting: undefined;
+  Myinfo: undefined;
 };
 
 const BottomTabs = () => {
@@ -29,8 +29,8 @@ const BottomTabs = () => {
     (async () => {
       const openedDeepLinkUrl = await AsyncStorage.getItem('openedDeepLinkUrl');
       if (openedDeepLinkUrl) {
-        Linking.openURL(openedDeepLinkUrl);
         await AsyncStorage.removeItem('openedDeepLinkUrl');
+        Linking.openURL(openedDeepLinkUrl);
       }
     })();
   }, []);
@@ -71,7 +71,7 @@ const BottomTabs = () => {
       <BottomTab.Screen name="Home" component={Home} options={{title: '홈'}} />
       <BottomTab.Screen name="Analyze" component={Analyze} options={{title: '분석'}} />
       <BottomTab.Screen name="StudyRoom" component={StudyRoom} options={{title: '공부방'}} />
-      <BottomTab.Screen name="Setting" component={Setting} options={{title: '설정'}} />
+      <BottomTab.Screen name="Myinfo" component={Myinfo} options={{title: '내 정보'}} />
     </BottomTab.Navigator>
   );
 };
@@ -94,8 +94,8 @@ const TabBarIcon = ({route, size, color}: {route: {name: string}; size: number; 
       return <FontAwesome6 name="chart-simple" iconStyle="solid" size={size} color={color} />;
     case 'StudyRoom':
       return <FontAwesome6 name="book" iconStyle="solid" size={size} color={color} />;
-    case 'Setting':
-      return <FontAwesome6 name="gear" iconStyle="solid" size={size} color={color} />;
+    case 'Myinfo':
+      return <FontAwesome6 name="user" iconStyle="solid" size={size} color={color} />;
     default:
       return null;
   }
