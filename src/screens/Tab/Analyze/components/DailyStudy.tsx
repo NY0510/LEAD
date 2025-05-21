@@ -3,7 +3,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
 import {useTheme} from '@/contexts/ThemeContext';
-import {getData} from '@/lib/parseData';
+import {getSingleData} from '@/lib/parseData';
 import {calcPer} from '@/lib/persentage';
 import {formatTime} from '@/lib/timeUtils';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
@@ -13,15 +13,15 @@ const DailyStudy = () => {
   const [trueStudyHour, setTrueStudyHour] = useState<number>(10);
   const [exceptionalHour, setExceptionalHour] = useState<number>(10);
   const [totalHour, setTotalHour] = useState<number>(0);
-  const [startDate, setStartDate] = useState<string>('250509'); // 조회할 시작 날짜
-  const [endDate, setEndDate] = useState<string>('250516'); // 조회할 끝 날짜
+  const today = new Date();
+  const yesterday = new Date(today.getDate() - 1);
 
   const fetchData = async () => {
-    const data = await getData(startDate, endDate); // getData 함수에서 반환하는 데이터
+    const data = await getSingleData(today.toISOString().split('T')[0]);
 
     // 각 필드별 데이터를 상태로 저장
-    setTrueStudyHour(data.trueStudiedHour[6]); // trueStudiedHour를 trueData에 저장
-    setExceptionalHour(data.exceptionalHour[6]); // exceptionalHour를 exData에 저장
+    setTrueStudyHour(data.trueStudiedHour[0]); // trueStudiedHour를 trueData에 저장
+    setExceptionalHour(data.exceptionalHour[0]); // exceptionalHour를 exData에 저장
     setTotalHour(trueStudyHour + exceptionalHour);
   };
 
@@ -38,7 +38,7 @@ const DailyStudy = () => {
         </TouchableOpacity>
         <View style={{flexDirection: 'column', alignItems: 'center', gap: 4}}>
           <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>일간 공부 시간</Text>
-          <Text style={[typography.body, {color: theme.text}]}>2025. 05. 01</Text>
+          <Text style={[typography.body, {color: theme.text}]}>{today.toISOString().split('T')[0]}</Text>
         </View>
         <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
           <FontAwesome6 name="angle-right" size={22} color={theme.text} iconStyle="solid" />
@@ -52,7 +52,7 @@ const DailyStudy = () => {
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>어제보다</Text>
-            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>+30분</Text>
+            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>+{3}분</Text>
           </View>
         </View>
         <Chart chartType="pie" pieData={pieData} />

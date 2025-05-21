@@ -1,42 +1,56 @@
-import React, {useEffect, useState} from 'react';
-import {Button, FlatList, Text, View} from 'react-native';
+import axios from 'axios';
+import uid from 'somewhere';
 
-import sampleJson from '@/assets/sample.json';
+const API_BASE_URL = `'/user/${uid}/studies'`;
 
-// 실제 경로에 맞게 수정하세요
+export const getTodayData = async (): Promise<{ trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[] }> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/today`);
+    const studyData = response.data;
 
-// 주어진 날짜 범위에 맞는 데이터를 배열로 반환하는 함수
-export const getData = async (startDate: string, endDate: string): Promise<{trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[]}> => {
-  // 데이터 불러오는 함수
-  const fetchStudyData = async (): Promise<{date: string; trueStudiedHour: number; exceptionalHour: number; goalHour: number}[] | null> => {
-    try {
-      // 실제 서버에서 데이터를 가져오는 예시
-      // const response = await axios.get('https://example.com/api/studydata');
-      // return response.data;
-      return sampleJson; // 실제 서버 대신 샘플 JSON 사용
-    } catch (error) {
-      console.error('Failed to fetch study data:', error);
-      return null;
-    }
-  };
-
-  const studyData = await fetchStudyData(); // 데이터를 가져오는 비동기 함수
-
-  if (studyData === null) {
-    return {trueStudiedHour: [], exceptionalHour: [], goalHour: []}; // 데이터가 없으면 빈 배열 반환
+    return {
+      trueStudiedHour: studyData.map((item: any) => item.trueStudiedHour),
+      exceptionalHour: studyData.map((item: any) => item.exceptionalHour),
+      goalHour: studyData.map((item: any) => item.goalHour),
+    };
+  } catch (error) {
+    console.error('Failed to fetch today study data:', error);
+    return { trueStudiedHour: [], exceptionalHour: [], goalHour: [] };
   }
+};
 
-  // 날짜 범위에 맞는 데이터 필터링
-  const filteredData = studyData.filter(item => item.date >= startDate && item.date <= endDate);
+// 특정 날짜 공부 데이터 호출
+export const getSingleData = async (date: string): Promise<{ trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[] }> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/studies/${date}`);
+    const studyData = response.data;
 
-  if (filteredData.length === 0) {
-    return {trueStudiedHour: [], exceptionalHour: [], goalHour: []}; // 범위 내에 데이터가 없으면 빈 배열 반환
+    return {
+      trueStudiedHour: [studyData.trueStudiedHour],
+      exceptionalHour: [studyData.exceptionalHour],
+      goalHour: [studyData.goalHour],
+    };
+  } catch (error) {
+    console.error(`Failed to fetch study data for ${date}:`, error);
+    return { trueStudiedHour: [], exceptionalHour: [], goalHour: [] };
   }
+};
 
-  // 필드에 해당하는 값만 추출하여 객체로 반환
-  const trueStudiedHour = filteredData.map(item => item.trueStudiedHour);
-  const exceptionalHour = filteredData.map(item => item.exceptionalHour);
-  const goalHour = filteredData.map(item => item.goalHour);
+// 특정 날짜 범위 공부 데이터 호출
+export const getWeekData = async (startDate: string, endDate: string): Promise<{ trueStudiedHour: number[]; exceptionalHour: number[]; goalHour: number[] }> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/study-range`, {
+      params: { startDate, endDate },
+    });
+    const studyData = response.data;
 
-  return {trueStudiedHour, exceptionalHour, goalHour};
+    return {
+      trueStudiedHour: studyData.map((item: any) => item.trueStudiedHour),
+      exceptionalHour: studyData.map((item: any) => item.exceptionalHour),
+      goalHour: studyData.map((item: any) => item.goalHour),
+    };
+  } catch (error) {
+    console.error(`Failed to fetch study data for range (${startDate} to ${endDate}):`, error);
+    return { trueStudiedHour: [], exceptionalHour: [], goalHour: [] };
+  }
 };
