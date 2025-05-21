@@ -2,27 +2,30 @@ import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
+import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {getSingleData} from '@/lib/parseData';
+import {getSingleData, getTodayData} from '@/lib/parseData';
 import {calcPer} from '@/lib/persentage';
 import {formatTime} from '@/lib/timeUtils';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const DailyStudy = () => {
+  const {user} = useAuth();
   const {theme, typography} = useTheme();
   const [trueStudyHour, setTrueStudyHour] = useState<number>(10);
   const [exceptionalHour, setExceptionalHour] = useState<number>(10);
   const [totalHour, setTotalHour] = useState<number>(0);
   const today = new Date();
   const yesterday = new Date(today.getDate() - 1);
+  const [yesterdayStudiedHour, setYesterdayHour] = useState<number>(0);
 
   const fetchData = async () => {
-    const data = await getSingleData(today.toISOString().split('T')[0]);
-
-    // 각 필드별 데이터를 상태로 저장
-    setTrueStudyHour(data.trueStudiedHour[0]); // trueStudiedHour를 trueData에 저장
-    setExceptionalHour(data.exceptionalHour[0]); // exceptionalHour를 exData에 저장
-    setTotalHour(trueStudyHour + exceptionalHour);
+    const data = await getTodayData(user?.uid);
+    const yesterdayData = await getSingleData(yesterday.toISOString().split('T')[0], user?.uid);
+    setYesterdayHour(yesterdayData.trueStudiedHour);
+    setTrueStudyHour(data.trueStudiedHour); // trueStudiedHour를 trueData에 저장
+    setExceptionalHour(data.exceptionalHour); // exceptionalHour를 exData에 저장
+    setTotalHour(data.total);
   };
 
   const pieData = [
@@ -52,7 +55,7 @@ const DailyStudy = () => {
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>어제보다</Text>
-            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>+{3}분</Text>
+            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{(totalHour - yesterdayStudiedHour).toLocaleString('en-US', {signDisplay: 'always'})}분</Text>
           </View>
         </View>
         <Chart chartType="pie" pieData={pieData} />
