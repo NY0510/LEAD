@@ -5,7 +5,7 @@ import AppInfoSection from './components/AppInfoSection';
 import MyInfoCard from './components/MyInfoSection';
 import ProfileSection from './components/ProfileSection';
 
-const Setting = () => {
+const Myinfo = () => {
   return (
     <Fragment>
       <ScrollView contentContainerStyle={{padding: 18}}>
@@ -19,4 +19,4 @@ const Setting = () => {
   );
 };
 
-export default Setting;
+export default Myinfo;

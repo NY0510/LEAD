@@ -8,7 +8,7 @@ import BottomTabs from '@/navigations/BottomTabs';
 import JoinStudyRoom from '@/screens/JoinStudyRoom';
 import Login from '@/screens/Login';
 import Study from '@/screens/Study';
-import DeveloperInfo from '@/screens/Tab/Setting/components/DeveloperInfo';
+import DeveloperInfo from '@/screens/Tab/Myinfo/components/DeveloperInfo';
 import {toDP} from '@/theme/typography';
 import {createStackNavigator} from '@react-navigation/stack';
 
