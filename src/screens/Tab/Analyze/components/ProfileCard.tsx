@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Image, Text, View} from 'react-native';
 
+import {getStudyByDateRange} from '@/api';
 import FireSvg from '@/assets/images/fire.svg';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';

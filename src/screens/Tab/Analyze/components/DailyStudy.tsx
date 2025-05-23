@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
+import {getStudyByDate} from '@/api';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {getSingleData} from '@/lib/parseData';
 import {calcPer} from '@/lib/persentage';
 import {formatTime} from '@/lib/timeUtils';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
@@ -21,8 +21,11 @@ const DailyStudy = () => {
   const [yesterdayStudiedHour, setYesterdayHour] = useState<number>(0);
 
   const fetchData = async () => {
-    const data = await getSingleData(startDate.toISOString().split('T')[0], user?.uid);
-    const yesterdayData = await getSingleData(yesterday.toISOString().split('T')[0], user?.uid);
+    if (!user) {
+      return;
+    }
+    const data = await getStudyByDate(user.uid, startDate.toISOString().split('T')[0]);
+    const yesterdayData = await getStudyByDate(user.uid, yesterday.toISOString().split('T')[0]);
     setYesterdayHour(yesterdayData.trueStudiedHour);
     setTrueStudyHour(data.trueStudiedHour);
     setExceptionalHour(data.exceptionalHour);
