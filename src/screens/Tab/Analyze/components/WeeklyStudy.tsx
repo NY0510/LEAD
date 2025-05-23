@@ -27,7 +27,7 @@ const WeeklyStudy = () => {
     setTotalStudy(await getTotalStudyArr(user.uid,week))
     setWeekAvg(await getWeekAvg(user.uid,week))
     setPrivWeekAvg(await getWeekAvg(user.uid,week-1))
-    };
+  };
 
   const onLeftPressed = () => {
     setWeek(week-1);
@@ -40,8 +40,8 @@ const WeeklyStudy = () => {
 
   const stackData = pureStudy.map((val, i) => ({
     stacks: [
-      { value: val, color: '#EE902C' },
-      { value: nonStudy[i], color: '#344BFD' }
+      { value: val+10, color: '#EE902C' },
+      { value: nonStudy[i]+10, color: '#344BFD' }
     ],
     label: ['월', '화', '수', '목', '금', '토', '일'][i],
   }));

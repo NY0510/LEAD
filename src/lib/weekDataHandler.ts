@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {getStudyByDateRange} from '@/api';
+import {getStudyByDateRange,getGoal} from '@/api';
 
 const today = new Date();
 const getStartOfWeek = (date: Date) => {
@@ -37,6 +37,25 @@ export const getTotalStudyArr = async (uid: string, week: number) => {
     const data: { total_study: number }[] = await getWeekData(uid, week);
     const pureStudyArr = data.map((total_arr) => total_arr.total_study);
     return pureStudyArr;
+};
+
+export const getGoalArr = async (uid: string, week: number): Promise<number[]> => {
+    const data: { goal: number }[] = await getWeekData(uid, week);
+    let goalArr = data.map((goalItem) => goalItem.goal);
+    let lastValue = await getGoal(uid);
+
+    if (goalArr.every(goal => goal === 0)) {
+        return Array(goalArr.length).fill(getGoal(uid));
+    }
+
+    goalArr = goalArr.map(goal => {
+        if (goal !== 0) {
+            lastValue = goal;
+            return goal;
+        }
+        return lastValue;
+    });
+    return goalArr;
 };
 
 export const getWeekRange = (week:number) => {
