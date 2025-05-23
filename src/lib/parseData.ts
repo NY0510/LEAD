@@ -18,11 +18,7 @@ export const getTodayData = async (uid:string|undefined): Promise<{ date: string
     console.error('Failed to fetch today study data:', error);
 
     return {
-      date: '', 
-      trueStudiedHour: 0, 
-      exceptionalHour: 0, 
-      goalHour: 0, 
-      total: 0 
+      date: '', trueStudiedHour: 0, exceptionalHour: 0, goalHour: 0, total: 0 
     };
   }
 };
