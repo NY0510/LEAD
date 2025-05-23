@@ -5,3 +5,12 @@ export const calcPer = (totalValue: number, value: number) => {
   const percentage = (value / totalValue) * 100;
   return Math.round(percentage);
 };
+
+export const addSign = (input:number) =>{
+    if(input!>=0){
+      return `${input}`
+    }
+    else{
+      return `+${input}`
+    }
+}

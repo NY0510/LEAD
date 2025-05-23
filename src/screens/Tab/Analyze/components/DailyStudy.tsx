@@ -5,7 +5,7 @@ import Chart from './Chart';
 import {getStudyByDate} from '@/api';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {calcPer} from '@/lib/persentage';
+import {addSign, calcPer} from '@/lib/sol';
 import {formatTime} from '@/lib/timeUtils';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
@@ -26,9 +26,9 @@ const DailyStudy = () => {
     }
     const data = await getStudyByDate(user.uid, startDate.toISOString().split('T')[0]);
     const yesterdayData = await getStudyByDate(user.uid, yesterday.toISOString().split('T')[0]);
-    setYesterdayHour(yesterdayData.trueStudiedHour);
-    setTrueStudyHour(data.trueStudiedHour);
-    setExceptionalHour(data.exceptionalHour);
+    setYesterdayHour(yesterdayData.pure_study);
+    setTrueStudyHour(data.pure_study);
+    setExceptionalHour(data.non_study);
     setTotalHour(data.total);
   };
 
@@ -76,7 +76,7 @@ const DailyStudy = () => {
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>어제보다</Text>
-            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{new Intl.NumberFormat('en-US', {signDisplay: 'always'}).format(totalHour - yesterdayStudiedHour)}분</Text>
+            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{addSign(totalHour - yesterdayStudiedHour)}분</Text>
           </View>
         </View>
         <Chart chartType="pie" pieData={pieData} />

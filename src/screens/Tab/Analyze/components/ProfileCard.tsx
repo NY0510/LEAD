@@ -5,7 +5,7 @@ import {getStudyByDateRange} from '@/api';
 import FireSvg from '@/assets/images/fire.svg';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {calcPer} from '@/lib/persentage';
+import {calcPer} from '@/lib/sol';
 
 const ProfileCard = () => {
   const {user} = useAuth();
