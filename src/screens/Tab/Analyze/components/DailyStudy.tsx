@@ -40,13 +40,11 @@ const DailyStudy = () => {
     fetchData();
   };
   const onRightPressed = () => {
-    if (startDate.toISOString() !== today.toISOString()) {
-      const newDate = new Date(startDate);
-      newDate.setDate(newDate.getDate() + 1);
-      setStartDate(newDate);
-      setYesterday(new Date(startDate.getDate() - 1));
-      fetchData();
-    }
+    const newDate = new Date(startDate);
+    newDate.setDate(newDate.getDate() + 1);
+    setStartDate(newDate);
+    setYesterday(new Date(startDate.getDate() - 1));
+    fetchData();
   };
 
   const pieData = [

@@ -14,3 +14,8 @@ export const addSign = (input:number) =>{
       return `+${input}`
     }
 }
+
+export const sumArr = (inputArr:number[]) =>{
+  const sum = inputArr.reduce((acc, cur) => acc + cur, 0);
+  return sum;
+}

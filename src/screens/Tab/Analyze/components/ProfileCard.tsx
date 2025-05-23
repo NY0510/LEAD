@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {Image, Text, View} from 'react-native';
 
-import {getStudyByDateRange} from '@/api';
 import FireSvg from '@/assets/images/fire.svg';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {calcPer} from '@/lib/sol';
+import {calcPer,sumArr} from '@/lib/sol';
+import {getPureStudyArr,getTotalStudyArr} from '@/lib/weekDataHandler'
 
 const ProfileCard = () => {
   const {user} = useAuth();
@@ -13,8 +13,11 @@ const ProfileCard = () => {
   const [weeklyStudiedHour, setStudiedHour] = useState(0);
   const [weeklyTotalHour, setTotalHour] = useState(0);
   const fetchData = async () => {
-    setStudiedHour(0);
-    setTotalHour(0);
+    if (!user) {
+      return;
+    }
+    setStudiedHour(sumArr(await getPureStudyArr(user.uid,0)));
+    setTotalHour(sumArr(await getTotalStudyArr(user.uid,0)));
   };
 
   return (
