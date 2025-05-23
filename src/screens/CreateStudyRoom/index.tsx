@@ -98,7 +98,7 @@ const CreateStudyRoom = () => {
           <View style={{gap: 24, flex: 1, alignItems: 'center'}}>
             <TouchableOpacity activeOpacity={0.65} onPress={() => openBottomSheet(bottomSheetRef)}>
               <Image source={image ? {uri: image.path.startsWith('file://') ? image.path : `file://${image.path}`} : require('@/assets/images/studyroom_default.jpg')} style={{aspectRatio: 16 / 9, borderRadius: 12, maxHeight: 250, maxWidth: '100%', width: '100%'}} resizeMode="cover" />
-              <FontAwesome6 name="camera" iconStyle="solid" size={20} color="#fff" style={{position: 'absolute', padding: 10, borderRadius: '50%', bottom: 10, right: 10, backgroundColor: theme.text}} />
+              <FontAwesome6 name="camera" iconStyle="solid" size={20} color="#fff" style={{position: 'absolute', padding: 10, borderRadius: '50%', bottom: 10, right: 10, backgroundColor: `${theme.text}99`}} />
             </TouchableOpacity>
 
             <View style={{gap: 8, width: '100%'}}>

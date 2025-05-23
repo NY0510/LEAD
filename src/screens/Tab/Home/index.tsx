@@ -217,11 +217,13 @@ const Home = () => {
                   <Text style={[typography.body, {color: theme.secondary}]}>공부방을 만들어보세요.</Text>
                 </View>
               ) : (
-                studyRooms.slice(0, 6).map((studyRoom, i) => (
-                  <TouchableOpacity key={i} activeOpacity={0.65} style={{flexBasis: '40%', flexGrow: 1}}>
+                studyRooms.slice(0, 6).map(studyRoom => (
+                  <TouchableOpacity key={studyRoom.room_id} activeOpacity={0.65} style={{width: '48%'}}>
                     <TouchableScale>
-                      <View style={[{padding: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center', width: '100%'}, {backgroundColor: theme.background}]}>
-                        <Text style={[typography.body, {color: theme.text}, {fontWeight: '600'}]}>{studyRoom.name}</Text>
+                      <View style={[{padding: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center'}, {backgroundColor: theme.background}]}>
+                        <Text style={[typography.body, {color: theme.text}, {fontWeight: '600'}]} numberOfLines={1} ellipsizeMode="tail">
+                          {studyRoom.name}
+                        </Text>
                       </View>
                     </TouchableScale>
                   </TouchableOpacity>

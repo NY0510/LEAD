@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback, useEffect, useRef, useState} from 'react';
-import {Image, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Image, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
 import Share from 'react-native-share';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
@@ -31,6 +31,8 @@ const StudyRoom = () => {
   const [selectedStudyRoom, setSelectedStudyRoom] = useState<StudyRoomType | null>(null);
   const [cachedStudyRoomLength, setCachedStudyRoomLength] = useState(null);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const actionBottomSheetRef = useRef<BottomSheet>(null);
 
@@ -74,6 +76,13 @@ const StudyRoom = () => {
     });
     return unsubscribe;
   }, [bottomTabNavigation, fetchStudyRooms]);
+
+  const toggleSortOrder = () => {
+    setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    setStudyRooms(prevRooms => [...prevRooms].sort((a, b) => (sortOrder === 'asc' ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime() : new Date(b.created_at).getTime() - new Date(a.created_at).getTime())));
+  };
+
+  const filteredStudyRooms = studyRooms.filter(room => room.name.toLowerCase().includes(searchQuery.toLowerCase()) || (room.description?.toLowerCase() || '').includes(searchQuery.toLowerCase()));
 
   const handleInviteStudyRoom = async (studyRoom: StudyRoomType) => {
     if (!user) {
@@ -142,63 +151,85 @@ https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
 
   return (
     <Fragment>
-      <ScrollView contentContainerStyle={{padding: 18, flexGrow: loading || studyRooms.length !== 0 ? 0 : 1}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
-        <View style={{gap: 12, flex: 1, justifyContent: 'center'}}>
-          {loading || refreshing ? (
-            <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
-              {Array.from({length: cachedStudyRoomLength || 5}).map((_, index) => (
-                <SkeletonPlaceholder.Item key={index} flexDirection="row" marginBottom={12}>
-                  <SkeletonPlaceholder.Item width={80} height={80} borderRadius={12} />
-                  <SkeletonPlaceholder.Item flex={1} marginLeft={12}>
-                    <SkeletonPlaceholder.Item width="60%" height={20} marginBottom={6} />
-                    <SkeletonPlaceholder.Item width="40%" height={16} />
-                  </SkeletonPlaceholder.Item>
-                </SkeletonPlaceholder.Item>
-              ))}
-            </SkeletonPlaceholder>
-          ) : studyRooms.length === 0 ? (
-            <View style={{alignItems: 'center', justifyContent: 'center', flex: 1, gap: 12}}>
-              <FontAwesome6 name="face-frown" iconStyle="regular" size={40} color={theme.inactive} />
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={[typography.body, {color: theme.secondary}]}>아직 공부방이 없어요.</Text>
-                <Text style={[typography.body, {color: theme.secondary}]}>공부방을 만들어보세요.</Text>
-              </View>
+      <View style={{flex: 1}}>
+        <View style={{padding: 16, backgroundColor: theme.background}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 14}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', flex: 1, gap: 8, padding: 8, borderWidth: 1, borderColor: theme.border, borderRadius: 8}}>
+              <FontAwesome6 name="magnifying-glass" iconStyle="solid" size={20} color={theme.secondary} />
+              <TextInput placeholder="이름 및 설명으로 검색" maxLength={30} placeholderTextColor={theme.secondary} style={[typography.body, {color: theme.text, flexShrink: 1, flex: 1}]} value={searchQuery} onChangeText={setSearchQuery} />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity activeOpacity={0.65} onPress={() => setSearchQuery('')}>
+                  <FontAwesome6 name="circle-xmark" iconStyle="solid" size={18} color={theme.secondary} />
+                </TouchableOpacity>
+              )}
             </View>
-          ) : (
-            studyRooms.map(studyRoom => (
-              <TouchableOpacity key={studyRoom.room_id} activeOpacity={0.65} onPress={() => console.log('Study Room Pressed')}>
-                <Card style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                  <Image source={studyRoom.cover_image ? {uri: studyRoom.cover_image} : require('@/assets/images/studyroom_default.jpg')} style={{width: 80, aspectRatio: 1, borderRadius: 12}} />
-                  <View style={{flex: 1}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8}}>
-                      <Text style={[typography.subtitle, {color: theme.text}]}>{studyRoom.name}</Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          setBottomSheetOpen(true);
-                          setSelectedStudyRoom(studyRoom);
-                          openBottomSheet(actionBottomSheetRef);
-                        }}
-                        activeOpacity={0.65}
-                        hitSlop={10}>
-                        <FontAwesome6 name="ellipsis-vertical" iconStyle="solid" size={20} color={theme.secondary} />
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={[typography.body, {color: theme.secondary}]}>{studyRoom.description}</Text>
-                    <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                      <View style={{flexDirection: 'row', justifyContent: 'flex-end', gap: 12}}>
-                        <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
-                          <FontAwesome6 name="user-group" iconStyle="solid" size={14} color={theme.secondary} />
-                          <Text style={[typography.body, {color: theme.secondary}]}>{studyRoom.participants.length}</Text>
+            <TouchableOpacity onPress={toggleSortOrder} activeOpacity={0.65} hitSlop={10}>
+              <FontAwesome6 name={sortOrder === 'asc' ? 'sort-up' : 'sort-down'} iconStyle="solid" size={20} color={theme.secondary} />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <ScrollView style={{flex: 1, paddingHorizontal: 16}} contentContainerStyle={{flexGrow: filteredStudyRooms.length === 0 ? 1 : 0}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+          <View style={{gap: 12, flex: 1, justifyContent: 'center', marginBottom: 100}}>
+            {loading || refreshing ? (
+              <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                {Array.from({length: cachedStudyRoomLength || 5}).map((_, index) => (
+                  <SkeletonPlaceholder.Item key={index} flexDirection="row" marginBottom={12}>
+                    <SkeletonPlaceholder.Item width={80} height={80} borderRadius={12} />
+                    <SkeletonPlaceholder.Item flex={1} marginLeft={12}>
+                      <SkeletonPlaceholder.Item width="60%" height={20} marginBottom={6} />
+                      <SkeletonPlaceholder.Item width="40%" height={16} />
+                    </SkeletonPlaceholder.Item>
+                  </SkeletonPlaceholder.Item>
+                ))}
+              </SkeletonPlaceholder>
+            ) : filteredStudyRooms.length === 0 ? (
+              <View style={{alignItems: 'center', justifyContent: 'center', flex: 1, gap: 12}}>
+                <FontAwesome6 name="face-frown" iconStyle="regular" size={40} color={theme.inactive} />
+                <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                  <Text style={[typography.body, {color: theme.secondary}]}>아직 공부방이 없어요.</Text>
+                  <Text style={[typography.body, {color: theme.secondary}]}>공부방을 만들어보세요.</Text>
+                </View>
+              </View>
+            ) : (
+              filteredStudyRooms.map(studyRoom => (
+                <TouchableOpacity key={studyRoom.room_id} activeOpacity={0.65} onPress={() => console.log('Study Room Pressed')}>
+                  <Card style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+                    <Image source={studyRoom.cover_image ? {uri: studyRoom.cover_image} : require('@/assets/images/studyroom_default.jpg')} style={{width: 80, aspectRatio: 1, borderRadius: 12}} />
+                    <View style={{flex: 1}}>
+                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8}}>
+                        <Text style={[typography.subtitle, {color: theme.text, flexShrink: 1}]} numberOfLines={1} ellipsizeMode="tail">
+                          {studyRoom.name}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setBottomSheetOpen(true);
+                            setSelectedStudyRoom(studyRoom);
+                            openBottomSheet(actionBottomSheetRef);
+                          }}
+                          activeOpacity={0.65}
+                          hitSlop={10}>
+                          <FontAwesome6 name="ellipsis-vertical" iconStyle="solid" size={20} color={theme.secondary} />
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={[typography.body, {color: theme.secondary, flexShrink: 1}]} numberOfLines={2} ellipsizeMode="tail">
+                        {studyRoom.description}
+                      </Text>
+                      <View style={{flex: 1, justifyContent: 'flex-end', marginTop: 12}}>
+                        <View style={{flexDirection: 'row', justifyContent: 'flex-end', gap: 12}}>
+                          <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
+                            <FontAwesome6 name="user-group" iconStyle="solid" size={14} color={theme.secondary} />
+                            <Text style={[typography.body, {color: theme.secondary}]}>{studyRoom.participants.length}</Text>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
-                </Card>
-              </TouchableOpacity>
-            ))
-          )}
-        </View>
-      </ScrollView>
+                  </Card>
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+        </ScrollView>
+      </View>
 
       <Animated.View style={[{position: 'absolute', bottom: 16, right: 16}, animatedStyle]}>
         <FloatingActionButton icon={<FontAwesome6 name="plus" iconStyle="solid" size={20} color={'#fff'} />} onPress={() => rootStackNavigation.navigate('CreateStudyRoom')} />
