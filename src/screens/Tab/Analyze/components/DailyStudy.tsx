@@ -4,7 +4,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import Chart from './Chart';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {getSingleData, getTodayData} from '@/lib/parseData';
+import {getSingleData} from '@/lib/parseData';
 import {calcPer} from '@/lib/persentage';
 import {formatTime} from '@/lib/timeUtils';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
@@ -16,16 +16,34 @@ const DailyStudy = () => {
   const [exceptionalHour, setExceptionalHour] = useState<number>(10);
   const [totalHour, setTotalHour] = useState<number>(0);
   const today = new Date();
-  const yesterday = new Date(today.getDate() - 1);
+  const [startDate, setStartDate] = useState(today);
+  const [yesterday, setYesterday] = useState(new Date(startDate.getDate() - 1));
   const [yesterdayStudiedHour, setYesterdayHour] = useState<number>(0);
 
   const fetchData = async () => {
-    const data = await getTodayData(user?.uid);
+    const data = await getSingleData(startDate.toISOString().split('T')[0], user?.uid);
     const yesterdayData = await getSingleData(yesterday.toISOString().split('T')[0], user?.uid);
     setYesterdayHour(yesterdayData.trueStudiedHour);
-    setTrueStudyHour(data.trueStudiedHour); // trueStudiedHour를 trueData에 저장
-    setExceptionalHour(data.exceptionalHour); // exceptionalHour를 exData에 저장
+    setTrueStudyHour(data.trueStudiedHour);
+    setExceptionalHour(data.exceptionalHour);
     setTotalHour(data.total);
+  };
+
+  const onLeftPressed = () => {
+    const newDate = new Date(startDate);
+    newDate.setDate(newDate.getDate() - 1);
+    setStartDate(newDate);
+    setYesterday(new Date(startDate.getDate() - 1));
+    fetchData();
+  };
+  const onRightPressed = () => {
+    if (startDate.toISOString() !== today.toISOString()) {
+      const newDate = new Date(startDate);
+      newDate.setDate(newDate.getDate() + 1);
+      setStartDate(newDate);
+      setYesterday(new Date(startDate.getDate() - 1));
+      fetchData();
+    }
   };
 
   const pieData = [
@@ -36,14 +54,14 @@ const DailyStudy = () => {
   return (
     <View style={{gap: 12}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-        <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
+        <TouchableOpacity activeOpacity={0.65} onPress={onLeftPressed}>
           <FontAwesome6 name="angle-left" size={22} color={theme.text} iconStyle="solid" />
         </TouchableOpacity>
         <View style={{flexDirection: 'column', alignItems: 'center', gap: 4}}>
           <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>일간 공부 시간</Text>
-          <Text style={[typography.body, {color: theme.text}]}>{today.toISOString().split('T')[0]}</Text>
+          <Text style={[typography.body, {color: theme.text}]}>{startDate.toISOString().split('T')[0]}</Text>
         </View>
-        <TouchableOpacity activeOpacity={0.65} onPress={() => {}}>
+        <TouchableOpacity activeOpacity={0.65} onPress={onRightPressed}>
           <FontAwesome6 name="angle-right" size={22} color={theme.text} iconStyle="solid" />
         </TouchableOpacity>
       </View>
@@ -55,7 +73,7 @@ const DailyStudy = () => {
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>어제보다</Text>
-            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{(totalHour - yesterdayStudiedHour).toLocaleString('en-US', {signDisplay: 'always'})}분</Text>
+            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{new Intl.NumberFormat('en-US', {signDisplay: 'always'}).format(totalHour - yesterdayStudiedHour)}분</Text>
           </View>
         </View>
         <Chart chartType="pie" pieData={pieData} />

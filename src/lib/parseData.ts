@@ -4,9 +4,9 @@ import today from '@/assets/today.json'
 // 오늘 공부 데이터 호출
 export const getTodayData = async (uid:string|undefined): Promise<{ date: string; trueStudiedHour: number; exceptionalHour: number; goalHour: number; total: number }> => {
   try {
-    const response = await axios.get(`/user/${uid}/studies/today`);
-    const studyData = response.data;
-
+    //const response = await axios.get(`/user/${uid}/studies/today`);
+    //const studyData = response.data;
+    const studyData = today;
     return {
       date: studyData.date,
       trueStudiedHour: studyData.pure_study,
