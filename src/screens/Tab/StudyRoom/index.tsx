@@ -1,17 +1,19 @@
 import React, {Fragment, useCallback, useEffect, useRef, useState} from 'react';
 import {Image, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
 import Share from 'react-native-share';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
-import {getMyStudyRooms} from '@/api';
+import {deleteStudyRoom, getMyStudyRooms, leaveStudyRoom} from '@/api';
 import Card from '@/components/Card';
 import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {openBottomSheet} from '@/lib/bottomSheetUtils';
+import {closeBottomSheet, openBottomSheet} from '@/lib/bottomSheetUtils';
 import {showToast} from '@/lib/toast';
 import {BottomTabParamList} from '@/navigations/BottomTabs';
+import {RootStackParamList} from '@/navigations/RootStacks';
 import {type StudyRoom as StudyRoomType} from '@/types/api';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
@@ -21,14 +23,16 @@ const StudyRoom = () => {
   const {theme, typography} = useTheme();
   const {user} = useAuth();
   const bottomTabNavigation = useNavigation<NavigationProp<BottomTabParamList>>();
+  const rootStackNavigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [refreshing, setRefreshing] = useState(false);
   const [studyRooms, setStudyRooms] = useState<StudyRoomType[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedStudyRoom, setSelectedStudyRoom] = useState<StudyRoomType | null>(null);
-  const [cachedStudyRoomLength, setCachedStudyRoomLength] = useState(0);
+  const [cachedStudyRoomLength, setCachedStudyRoomLength] = useState(null);
+  const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const actionBottomSheetRef = useRef<BottomSheet>(null);
 
   const fetchStudyRooms = useCallback(async () => {
     setLoading(true);
@@ -59,12 +63,19 @@ const StudyRoom = () => {
   // 화면이 blur될 때 bottom sheet 닫기
   useEffect(() => {
     const unsubscribe = bottomTabNavigation.addListener('blur', () => {
-      bottomSheetRef.current?.close();
+      actionBottomSheetRef.current?.close();
     });
     return unsubscribe;
   }, [bottomTabNavigation]);
 
-  const inviteStudyRoom = (studyRoom: StudyRoomType) => {
+  useEffect(() => {
+    const unsubscribe = bottomTabNavigation.addListener('focus', () => {
+      fetchStudyRooms();
+    });
+    return unsubscribe;
+  }, [bottomTabNavigation, fetchStudyRooms]);
+
+  const handleInviteStudyRoom = async (studyRoom: StudyRoomType) => {
     if (!user) {
       return;
     }
@@ -79,22 +90,59 @@ const StudyRoom = () => {
 https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
 `;
 
-    Share.open({message})
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+    try {
+      await Share.open({
+        message,
+        title: '공부방 초대하기',
+        url: `https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}`,
+        failOnCancel: false,
+      });
+      closeBottomSheet(actionBottomSheetRef);
+    } catch (e) {
+      showToast(`공부방 초대하기에 실패했어요.\n${(e as Error).message}`);
+    }
   };
 
-  const leaveStudyRoom = (studyRoom: StudyRoomType) => {
-    console.log('Leave Study Room:', studyRoom);
+  const handleLeaveStudyRoom = async (studyRoom: StudyRoomType) => {
+    if (!user) {
+      return;
+    }
+
+    try {
+      await leaveStudyRoom(user.uid, studyRoom.room_id);
+      setStudyRooms(studyRooms.filter(room => room.room_id !== studyRoom.room_id));
+      closeBottomSheet(actionBottomSheetRef);
+      showToast('공부방에서 나갔어요.');
+    } catch (e) {
+      showToast(`공부방에서 나가는데 실패했어요.\n${(e as Error).message}`);
+    }
   };
 
-  const reportStudyRoom = (studyRoom: StudyRoomType) => {
-    console.log('Report Study Room:', studyRoom);
+  const handleDeleteStudyRoom = async (studyRoom: StudyRoomType) => {
+    if (!user) {
+      return;
+    }
+
+    try {
+      await deleteStudyRoom(user.uid, studyRoom.room_id);
+      setStudyRooms(studyRooms.filter(room => room.room_id !== studyRoom.room_id));
+      closeBottomSheet(actionBottomSheetRef);
+      showToast('공부방을 삭제했어요.');
+    } catch (e) {
+      showToast(`공부방을 삭제하는데 실패했어요.\n${(e as Error).message}`);
+    }
   };
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(bottomSheetOpen ? 0 : 1, {duration: 200}),
+      transform: [{scale: withTiming(bottomSheetOpen ? 0.9 : 1, {duration: 200})}],
+    };
+  }, [bottomSheetOpen]);
 
   return (
     <Fragment>
-      <ScrollView contentContainerStyle={{padding: 18, flexGrow: studyRooms.length === 0 ? 1 : 0}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+      <ScrollView contentContainerStyle={{padding: 18, flexGrow: loading || studyRooms.length !== 0 ? 0 : 1}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
         <View style={{gap: 12, flex: 1, justifyContent: 'center'}}>
           {loading || refreshing ? (
             <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
@@ -117,17 +165,18 @@ https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
               </View>
             </View>
           ) : (
-            studyRooms.map((studyRoom, index) => (
-              <TouchableOpacity key={index} activeOpacity={0.65} onPress={() => console.log('Study Room Pressed')}>
+            studyRooms.map(studyRoom => (
+              <TouchableOpacity key={studyRoom.room_id} activeOpacity={0.65} onPress={() => console.log('Study Room Pressed')}>
                 <Card style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                  <Image source={{uri: studyRoom.cover_image}} style={{width: 80, aspectRatio: 1, borderRadius: 12}} />
+                  <Image source={studyRoom.cover_image ? {uri: studyRoom.cover_image} : require('@/assets/images/studyroom_default.jpg')} style={{width: 80, aspectRatio: 1, borderRadius: 12}} />
                   <View style={{flex: 1}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8}}>
                       <Text style={[typography.subtitle, {color: theme.text}]}>{studyRoom.name}</Text>
                       <TouchableOpacity
                         onPress={() => {
+                          setBottomSheetOpen(true);
                           setSelectedStudyRoom(studyRoom);
-                          openBottomSheet(bottomSheetRef);
+                          openBottomSheet(actionBottomSheetRef);
                         }}
                         activeOpacity={0.65}
                         hitSlop={10}>
@@ -151,34 +200,44 @@ https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
         </View>
       </ScrollView>
 
-      <CustomBottomSheet ref={bottomSheetRef} handleComponent={null} onClose={() => setSelectedStudyRoom(null)}>
+      <Animated.View style={[{position: 'absolute', bottom: 16, right: 16}, animatedStyle]}>
+        <FloatingActionButton icon={<FontAwesome6 name="plus" iconStyle="solid" size={20} color={'#fff'} />} onPress={() => rootStackNavigation.navigate('CreateStudyRoom')} />
+      </Animated.View>
+
+      <CustomBottomSheet
+        ref={actionBottomSheetRef}
+        handleComponent={null}
+        onClose={() => {
+          setSelectedStudyRoom(null);
+          setBottomSheetOpen(false);
+        }}>
         <CustomBottomSheetView>
-          <View style={{gap: 16}}>
-            <TouchableOpacity activeOpacity={0.65} onPress={() => inviteStudyRoom(selectedStudyRoom!)}>
+          <View style={{gap: 14}}>
+            <TouchableOpacity activeOpacity={0.65} onPress={() => handleInviteStudyRoom(selectedStudyRoom!)}>
               <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                <FontAwesome6 name="user-plus" iconStyle="solid" size={16} color={theme.text} />
+                <FontAwesome6 name="user-plus" iconStyle="solid" size={16} color={theme.text} style={{minWidth: 20}} />
                 <Text style={[typography.body, {color: theme.text}]}>초대하기</Text>
               </View>
             </TouchableOpacity>
             <View style={{height: 1, backgroundColor: theme.border}} />
-            <TouchableOpacity activeOpacity={0.65} onPress={() => leaveStudyRoom(selectedStudyRoom!)}>
-              <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                <FontAwesome6 name="arrow-right-from-bracket" iconStyle="solid" size={16} color={theme.text} />
-                <Text style={[typography.body, {color: theme.text}]}>나기기</Text>
-              </View>
-            </TouchableOpacity>
-            <View style={{height: 1, backgroundColor: theme.border}} />
-            <TouchableOpacity activeOpacity={0.65} onPress={() => reportStudyRoom(selectedStudyRoom!)}>
-              <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                <FontAwesome6 name="flag" iconStyle="solid" size={16} style={{minWidth: 18}} color={theme.red} />
-                <Text style={[typography.body, {color: theme.red}]}>신고하기</Text>
-              </View>
-            </TouchableOpacity>
+            {selectedStudyRoom && user && selectedStudyRoom.owner_uid === user.uid ? (
+              <TouchableOpacity activeOpacity={0.65} onPress={() => handleDeleteStudyRoom(selectedStudyRoom)}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <FontAwesome6 name="trash" iconStyle="solid" size={16} color={theme.red} style={{minWidth: 20}} />
+                  <Text style={[typography.body, {color: theme.red}]}>삭제하기</Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity activeOpacity={0.65} onPress={() => handleLeaveStudyRoom(selectedStudyRoom!)}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <FontAwesome6 name="arrow-right-from-bracket" iconStyle="solid" size={16} color={theme.text} style={{minWidth: 20}} />
+                  <Text style={[typography.body, {color: theme.text}]}>나가기</Text>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
         </CustomBottomSheetView>
       </CustomBottomSheet>
-
-      <FloatingActionButton icon={<FontAwesome6 name="plus" iconStyle="solid" size={20} color={'#fff'} />} onPress={() => console.log('Floating button pressed')} style={{position: 'absolute', bottom: 16, right: 16}} />
     </Fragment>
   );
 };

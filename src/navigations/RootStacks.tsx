@@ -5,6 +5,7 @@ import BootSplash from 'react-native-bootsplash';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 import BottomTabs from '@/navigations/BottomTabs';
+import CreateStudyRoom from '@/screens/CreateStudyRoom';
 import JoinStudyRoom from '@/screens/JoinStudyRoom';
 import Login from '@/screens/Login';
 import Study from '@/screens/Study';
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   Study: undefined;
   DeveloperInfo: undefined;
   JoinStudyRoom: {id: string};
+  CreateStudyRoom: undefined;
 };
 
 const RootStacks = () => {
@@ -63,6 +65,7 @@ const RootStacks = () => {
           <Stack.Screen name="Study" component={Study} />
           <Stack.Screen name="DeveloperInfo" component={DeveloperInfo} options={{headerShown: true, title: '갈려나간 사람들'}} />
           <Stack.Screen name="JoinStudyRoom" component={JoinStudyRoom} options={{headerShown: true, title: '공부방 참여'}} />
+          <Stack.Screen name="CreateStudyRoom" component={CreateStudyRoom} options={{headerShown: true, title: '공부방 만들기'}} />
         </Fragment>
       ) : (
         <Stack.Screen name="Login" component={Login} />

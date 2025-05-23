@@ -9,6 +9,12 @@ export const openBottomSheet = (ref: React.RefObject<BottomSheet | null>) => {
   }
 };
 
+export const closeBottomSheet = (ref: React.RefObject<BottomSheet | null>) => {
+  if (ref && ref.current) {
+    ref.current.close();
+  }
+};
+
 export const useRenderBackdrop = () =>
   useCallback(
     (props: any) => (

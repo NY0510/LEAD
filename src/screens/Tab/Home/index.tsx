@@ -11,7 +11,7 @@ import ProgressBar from '@/components/ProgressBar';
 import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
-import {openBottomSheet} from '@/lib/bottomSheetUtils';
+import {closeBottomSheet, openBottomSheet} from '@/lib/bottomSheetUtils';
 import {formatTime} from '@/lib/timeUtils';
 import {showToast} from '@/lib/toast';
 import {BottomTabParamList} from '@/navigations/BottomTabs';
@@ -104,13 +104,13 @@ const Home = () => {
 
   // 데이터 가져오기
   useEffect(() => {
-    if (!user) {
-      return;
-    }
+    (async () => {
+      if (!user) {
+        return;
+      }
 
-    fetchTodayStudyData();
-    fetchMemo();
-    fetchStudyRooms();
+      await Promise.all([fetchTodayStudyData(), fetchMemo(), fetchStudyRooms()]);
+    })();
   }, [fetchMemo, fetchStudyRooms, fetchTodayStudyData, user]);
 
   // 달성률 계산
@@ -119,11 +119,20 @@ const Home = () => {
   // 화면이 blur될 때 bottom sheet 닫기
   useEffect(() => {
     const unsubscribe = bottomTabNavigation.addListener('blur', () => {
-      studyTimeBottomSheetRef.current?.close();
-      memoBottomSheetRef.current?.close();
+      closeBottomSheet(studyTimeBottomSheetRef);
+      closeBottomSheet(memoBottomSheetRef);
     });
     return unsubscribe;
   }, [bottomTabNavigation]);
+
+  useEffect(() => {
+    const unsubscribe = bottomTabNavigation.addListener('focus', () => {
+      fetchTodayStudyData();
+      fetchMemo();
+      fetchStudyRooms();
+    });
+    return unsubscribe;
+  }, [bottomTabNavigation, fetchMemo, fetchStudyRooms, fetchTodayStudyData]);
 
   return (
     <Fragment>
@@ -208,8 +217,8 @@ const Home = () => {
                   <Text style={[typography.body, {color: theme.secondary}]}>공부방을 만들어보세요.</Text>
                 </View>
               ) : (
-                studyRooms.map((studyRoom, i) => (
-                  <TouchableOpacity key={i} activeOpacity={0.65} style={{flexGrow: 1}}>
+                studyRooms.slice(0, 6).map((studyRoom, i) => (
+                  <TouchableOpacity key={i} activeOpacity={0.65} style={{flexBasis: '40%', flexGrow: 1}}>
                     <TouchableScale>
                       <View style={[{padding: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center', width: '100%'}, {backgroundColor: theme.background}]}>
                         <Text style={[typography.body, {color: theme.text}, {fontWeight: '600'}]}>{studyRoom.name}</Text>
@@ -298,7 +307,8 @@ const Home = () => {
               const newGoal = hours * 60 + minutes;
               setGoalStudyTime(newGoal);
               setGoal(user!.uid, newGoal);
-              studyTimeBottomSheetRef.current?.close();
+              closeBottomSheet(studyTimeBottomSheetRef);
+              showToast('목표 공부 시간이 변경되었어요.');
             }}>
             <Text style={[typography.body, {color: theme.card}, {fontWeight: '600'}]}>저장</Text>
           </TouchableOpacity>
@@ -337,7 +347,8 @@ const Home = () => {
 
               setMemo(user!.uid, memoState.trim());
               Keyboard.dismiss();
-              memoBottomSheetRef.current?.close();
+              closeBottomSheet(memoBottomSheetRef);
+              showToast('메모가 저장되었어요.');
             }}>
             <Text style={[typography.body, {color: theme.card}, {fontWeight: '600'}]}>저장</Text>
           </TouchableOpacity>

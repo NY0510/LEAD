@@ -112,11 +112,13 @@ export const getStudyRooms = async () => {
 };
 
 // 공부방 생성
-export const createStudyRoom = async (uid: string, name: string) => {
+export const createStudyRoom = async (uid: string, name: string, cover_image: string, description: string) => {
   try {
-    const r = await httpClient.post('/stdyrooms/create', {
+    const r = await httpClient.post('/studyrooms/create', {
       name,
       owner_uid: uid,
+      cover_image,
+      description,
     });
     return r.data;
   } catch (error) {
@@ -128,7 +130,7 @@ export const createStudyRoom = async (uid: string, name: string) => {
 // 공부방 삭제
 export const deleteStudyRoom = async (uid: string, room_id: string) => {
   try {
-    const r = await httpClient.post(`/stdyrooms/${room_id}/delete`, {
+    const r = await httpClient.post(`/studyrooms/${room_id}/delete`, {
       uid: uid,
     });
     return r.data;
@@ -141,7 +143,7 @@ export const deleteStudyRoom = async (uid: string, room_id: string) => {
 // 공부방 나가기
 export const leaveStudyRoom = async (uid: string, room_id: string) => {
   try {
-    const r = await httpClient.post(`/stdyrooms/${room_id}/leave`, {
+    const r = await httpClient.post(`/studyrooms/${room_id}/leave`, {
       uid: uid,
     });
     return r.data;
@@ -165,7 +167,7 @@ export const getMyStudyRooms = async (uid: string) => {
 // 공부방 참가
 export const joinStudyRoom = async (uid: string, room_id: string) => {
   try {
-    const r = await httpClient.post(`/stdyrooms/${room_id}/join`, {
+    const r = await httpClient.post(`/studyrooms/${room_id}/join`, {
       uid: uid,
     });
     return r.data;
@@ -178,7 +180,7 @@ export const joinStudyRoom = async (uid: string, room_id: string) => {
 // 공부방 수정
 export const updateStudyRoom = async (uid: string, room_id: string, name: string, cover_image: string, description: string) => {
   try {
-    const r = await httpClient.post(`/stdyrooms/${room_id}/update`, {
+    const r = await httpClient.post(`/studyrooms/${room_id}/update`, {
       uid,
       name,
       cover_image,

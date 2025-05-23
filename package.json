@@ -39,6 +39,7 @@
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "^2.25.0",
     "react-native-gifted-charts": "^1.4.61",
+    "react-native-image-crop-picker": "^0.42.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-navigation-bar-color": "^2.0.2",
     "react-native-progress": "^5.0.1",
