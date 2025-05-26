@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
-import {useTheme} from '@/contexts/ThemeContext';
 import {useAuth} from '@/contexts/AuthContext';
+import {useTheme} from '@/contexts/ThemeContext';
+import {addSign, calcAvgPer} from '@/lib/sol';
+import {getGoalArr, getTotalStudyArr, getWeekRange} from '@/lib/weekDataHandler';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import {getTotalStudyArr,getWeekRange,getGoalArr} from '@/lib/weekDataHandler'
-import { calcAvgPer,addSign } from '@/lib/sol';
 
 const WeeklyGoal = () => {
   const {theme, typography} = useTheme();
   const {user} = useAuth();
-  const [week, setWeek] = useState(0)
+  const [week, setWeek] = useState(0);
   const [totalStudy, setTotalStudy] = useState([0]);
   const [privTotalStudy, setPrivTotalStudy] = useState([0]);
   const [goal, setGoal] = useState([0]);
@@ -21,25 +21,25 @@ const WeeklyGoal = () => {
     if (!user) {
       return;
     }
-    setTotalStudy(await getTotalStudyArr(user.uid,week))
-    setPrivTotalStudy(await getTotalStudyArr(user.uid,week-1))
-    setGoal(await getGoalArr(user.uid,week))
-    setPrivGoal(await getGoalArr(user.uid,week-1))
+    setTotalStudy(await getTotalStudyArr(user.uid, week));
+    setPrivTotalStudy(await getTotalStudyArr(user.uid, week - 1));
+    setGoal(await getGoalArr(user.uid, week));
+    setPrivGoal(await getGoalArr(user.uid, week - 1));
   };
 
   const onLeftPressed = () => {
-    setWeek(week-1);
-    fetchData();
+    setWeek(week - 1);
+    //fetchData();
   };
   const onRightPressed = () => {
-    setWeek(week+1);
+    setWeek(week + 1);
     fetchData();
   };
 
   const weeklyGoalData = totalStudy.map((val, i) => ({
     stacks: [
-      { value: val+10, color: '#EE902C' },
-      { value: Math.max(goal[i] - val, 0)+10, color: '#344BFD' }
+      {value: val + 10, color: '#EE902C'},
+      {value: Math.max(goal[i] - val, 0) + 10, color: '#344BFD'},
     ],
     label: ['월', '화', '수', '목', '금', '토', '일'][i],
   }));
@@ -62,11 +62,11 @@ const WeeklyGoal = () => {
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <View>
             <Text style={[typography.body, {color: theme.text}]}>이번주 평균 달성률</Text>
-            <Text style={[typography.title, {color: theme.text}]}>{calcAvgPer(totalStudy,goal)+'%'}</Text>
+            <Text style={[typography.title, {color: theme.text}]}>{calcAvgPer(totalStudy, goal) + '%'}</Text>
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>지난주보다</Text>
-            <Text style={[typography.body, {color: '#ff7171', fontWeight: 500}]}>{addSign(calcAvgPer(totalStudy,goal)-calcAvgPer(privTotalStudy,privGoal))}</Text>
+            <Text style={[typography.body, {color: '#ff7171', fontWeight: 500}]}>{addSign(calcAvgPer(totalStudy, goal) - calcAvgPer(privTotalStudy, privGoal))}</Text>
           </View>
         </View>
         <Chart
