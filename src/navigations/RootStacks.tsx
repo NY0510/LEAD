@@ -5,11 +5,12 @@ import BootSplash from 'react-native-bootsplash';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 import BottomTabs from '@/navigations/BottomTabs';
-import CreateStudyRoom from '@/screens/CreateStudyRoom';
-import JoinStudyRoom from '@/screens/JoinStudyRoom';
 import Login from '@/screens/Login';
 import Study from '@/screens/Study';
-import DeveloperInfo from '@/screens/Tab/Myinfo/components/DeveloperInfo';
+import StudyRoomCreate from '@/screens/StudyRoomCreate';
+import StudyRoomDetail from '@/screens/StudyRoomDetail';
+import StudyRoomJoin from '@/screens/StudyRoomJoin';
+import DeveloperInfo from '@/screens/Tab/Myinfo/screens/DeveloperInfo';
 import {toDP} from '@/theme/typography';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -20,8 +21,9 @@ export type RootStackParamList = {
   Tab: undefined;
   Study: undefined;
   DeveloperInfo: undefined;
-  JoinStudyRoom: {id: string};
-  CreateStudyRoom: undefined;
+  StudyRoomJoin: {id: string};
+  StudyRoomCreate: undefined;
+  StudyRoomDetail: {id: string};
 };
 
 const RootStacks = () => {
@@ -64,8 +66,9 @@ const RootStacks = () => {
           <Stack.Screen name="Tab" component={BottomTabs} />
           <Stack.Screen name="Study" component={Study} />
           <Stack.Screen name="DeveloperInfo" component={DeveloperInfo} options={{headerShown: true, title: '갈려나간 사람들'}} />
-          <Stack.Screen name="JoinStudyRoom" component={JoinStudyRoom} options={{headerShown: true, title: '공부방 참여'}} />
-          <Stack.Screen name="CreateStudyRoom" component={CreateStudyRoom} options={{headerShown: true, title: '공부방 만들기'}} />
+          <Stack.Screen name="StudyRoomJoin" component={StudyRoomJoin} options={{headerShown: true, title: '공부방 참여'}} />
+          <Stack.Screen name="StudyRoomCreate" component={StudyRoomCreate} options={{headerShown: true, title: '공부방 만들기'}} />
+          <Stack.Screen name="StudyRoomDetail" component={StudyRoomDetail} options={{headerShown: true, title: ''}} />
         </Fragment>
       ) : (
         <Stack.Screen name="Login" component={Login} />

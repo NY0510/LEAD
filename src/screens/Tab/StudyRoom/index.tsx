@@ -192,7 +192,7 @@ https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
               </View>
             ) : (
               filteredStudyRooms.map(studyRoom => (
-                <TouchableOpacity key={studyRoom.room_id} activeOpacity={0.65} onPress={() => console.log('Study Room Pressed')}>
+                <TouchableOpacity key={studyRoom.room_id} activeOpacity={0.65} onPress={() => rootStackNavigation.navigate('StudyRoomDetail', {id: studyRoom.room_id})}>
                   <Card style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
                     <Image source={studyRoom.cover_image ? {uri: studyRoom.cover_image} : require('@/assets/images/studyroom_default.jpg')} style={{width: 80, aspectRatio: 1, borderRadius: 12}} />
                     <View style={{flex: 1}}>
@@ -232,7 +232,7 @@ https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
       </View>
 
       <Animated.View style={[{position: 'absolute', bottom: 16, right: 16}, animatedStyle]}>
-        <FloatingActionButton icon={<FontAwesome6 name="plus" iconStyle="solid" size={20} color={'#fff'} />} onPress={() => rootStackNavigation.navigate('CreateStudyRoom')} />
+        <FloatingActionButton icon={<FontAwesome6 name="plus" iconStyle="solid" size={20} color={'#fff'} />} onPress={() => rootStackNavigation.navigate('StudyRoomCreate')} />
       </Animated.View>
 
       <CustomBottomSheet

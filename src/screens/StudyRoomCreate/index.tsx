@@ -15,7 +15,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
 
-const CreateStudyRoom = () => {
+const StudyRoomCreate = () => {
   const rootStackNavigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const {theme, typography} = useTheme();
@@ -87,7 +87,7 @@ const CreateStudyRoom = () => {
       showToast('공부방이 생성되었어요.');
       rootStackNavigation.goBack();
     } catch (e) {
-      showToast(`공부방 생성에 실패했어요:\n${(e as Error).message}`);
+      showToast(`공부방 생성에 실패했어요.\n${(e as Error).message}`);
     }
   }, [user, name, description, image, rootStackNavigation]);
 
@@ -98,12 +98,12 @@ const CreateStudyRoom = () => {
           <View style={{gap: 24, flex: 1, alignItems: 'center'}}>
             <TouchableOpacity activeOpacity={0.65} onPress={() => openBottomSheet(bottomSheetRef)}>
               <Image source={image ? {uri: image.path.startsWith('file://') ? image.path : `file://${image.path}`} : require('@/assets/images/studyroom_default.jpg')} style={{aspectRatio: 16 / 9, borderRadius: 12, maxHeight: 250, maxWidth: '100%', width: '100%'}} resizeMode="cover" />
-              <FontAwesome6 name="camera" iconStyle="solid" size={20} color="#fff" style={{position: 'absolute', padding: 10, borderRadius: '50%', bottom: 10, right: 10, backgroundColor: `${theme.text}99`}} />
+              <FontAwesome6 name="camera" iconStyle="solid" size={20} color="#fff" style={{position: 'absolute', padding: 10, borderRadius: 99, bottom: 10, right: 10, backgroundColor: `${theme.text}99`}} />
             </TouchableOpacity>
 
             <View style={{gap: 8, width: '100%'}}>
               <View style={{backgroundColor: theme.card, borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12}}>
-                <TextInput ref={nameTextInputRef} placeholder="공부방 이름 (필수)" style={[typography.body, {flex: 1}]} maxLength={30} value={name} onChangeText={setName} />
+                <TextInput ref={nameTextInputRef} placeholder="공부방 이름 (필수)" style={[typography.body, {flex: 1}]} textAlignVertical="top" maxLength={30} value={name} onChangeText={setName} />
                 <View style={{flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center'}}>
                   {name.length > 0 && (
                     <TouchableOpacity activeOpacity={0.65} onPress={() => setName('')}>
@@ -118,7 +118,7 @@ const CreateStudyRoom = () => {
               </View>
 
               <View style={{backgroundColor: theme.card, borderRadius: 8, flexDirection: 'row', alignItems: 'flex-end', gap: 12, padding: 12}}>
-                <TextInput ref={nameTextInputRef} placeholder="설명" style={[typography.body, {flex: 1, minHeight: 80}]} maxLength={50} multiline value={description} onChangeText={setDescription} />
+                <TextInput ref={nameTextInputRef} placeholder="설명" style={[typography.body, {flex: 1, minHeight: 80}]} textAlignVertical="top" maxLength={50} multiline value={description} onChangeText={setDescription} />
                 <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}}>
                   <View style={{flexDirection: 'row'}}>
                     <Text style={[typography.baseTextStyle, {color: theme.text}]}>{description.length}</Text>
@@ -183,4 +183,4 @@ const CreateStudyRoom = () => {
   );
 };
 
-export default CreateStudyRoom;
+export default StudyRoomCreate;
