@@ -19,7 +19,8 @@ export const getWeekData = (uid: string, week: number) => {
   const baseDate = new Date(today); // today를 복사하여 사용
   const newStartDate = getStartOfWeek(new Date(baseDate.setDate(baseDate.getDate() + 7 * week)));
   const newEndDate = getEndOfWeek(new Date(baseDate.setDate(baseDate.getDate() + 7 * week)));
-
+  console.log(week)
+  console.log(`${newStartDate} ~ ${newEndDate}`)
   return getStudyByDateRange(uid, newStartDate, newEndDate);
 };
 
@@ -69,13 +70,7 @@ export const getWeekRange = (week: number) => {
 
 export const getWeekAvg = async (uid: string, week: number): Promise<number> => {
   const totalStudy = await getTotalStudyArr(uid, week);
-  const filteredArr = totalStudy.filter(n => n > 0);
-  const arrLength = filteredArr.length;
-
-  if (arrLength === 0) {
-    return 0;
-  }
-
-  const sum = filteredArr.reduce((acc, val) => acc + val, 0);
+  const arrLength = totalStudy.length;
+  const sum = totalStudy.reduce((acc, val) => acc + val, 0);
   return sum / arrLength;
 };

@@ -29,7 +29,7 @@ const WeeklyGoal = () => {
 
   const onLeftPressed = () => {
     setWeek(week - 1);
-    //fetchData();
+    fetchData();
   };
   const onRightPressed = () => {
     setWeek(week + 1);
