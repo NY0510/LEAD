@@ -77,5 +77,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "patchedDependencies": {
+    "react-native-image-crop-picker@0.42.0": "patches/react-native-image-crop-picker@0.42.0.patch"
   }
 }
