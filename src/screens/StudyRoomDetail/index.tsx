@@ -49,7 +49,7 @@ const StudyRoomDetail = () => {
       <Text>공부방 설명: {studyRoom?.description}</Text>
       <Text>공부방 방장: {studyRoom?.owner_uid}</Text>
       <Text>공부방 생성일: {new Date(studyRoom?.created_at).toString()}</Text>
-      <Text>공부방 커버 이미지: {studyRoom?.cover_image}</Text>
+      {/* <Text>공부방 커버 이미지: {studyRoom?.cover_image}</Text> */}
       <Text>공부방 참여자 수: {studyRoom?.participants.length}</Text>
       <Text>공부방 참여자 목록:</Text>
       {studyRoom?.participants.map((participant, index) => <Text key={index}>{participant}</Text>)}

@@ -12,20 +12,20 @@ import {useTheme} from '@/contexts/ThemeContext';
 const Login = () => {
   const {signInWithGoogle} = useAuth();
   const {theme, typography, isDark} = useTheme();
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       await signInWithGoogle();
     } catch (err) {
       Alert.alert(`로그인에 실패했어요.\n${(err as Error).message}`);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  if (isLoading) {
+  if (loading) {
     return <Loading fullScreen />;
   }
 

@@ -11,6 +11,7 @@ import FloatingActionButton from '@/components/FloatingActionButton';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 import {closeBottomSheet, openBottomSheet} from '@/lib/bottomSheetUtils';
+import {getShareStudyRoomMessage} from '@/lib/shareStudyRoom';
 import {showToast} from '@/lib/toast';
 import {BottomTabParamList} from '@/navigations/BottomTabs';
 import {RootStackParamList} from '@/navigations/RootStacks';
@@ -89,15 +90,7 @@ const StudyRoom = () => {
       return;
     }
 
-    const inviterName = user.displayName || '알 수 없는 사용자';
-    const message = `📚 ${inviterName}님이 "${studyRoom.name}" 공부방에 초대했어요!
-
-벌써 ${studyRoom.participants.length}명이 같이 공부 중이에요!
-지금 바로 들어와서 같이 집중해봐요 🔥
-
-👇 참여 링크
-https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}
-`;
+    const message = getShareStudyRoomMessage(user, studyRoom);
 
     try {
       await Share.open({
