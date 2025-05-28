@@ -39,7 +39,7 @@
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "^2.25.0",
     "react-native-gifted-charts": "^1.4.61",
-    "react-native-image-crop-picker": "^0.42.0",
+    "react-native-image-crop-picker": "https://github.com/ny0510/react-native-image-crop-picker",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-navigation-bar-color": "^2.0.2",
     "react-native-progress": "^5.0.1",
@@ -52,6 +52,7 @@
     "react-native-svg-transformer": "^1.5.1",
     "react-native-timer-picker": "^2.1.1",
     "react-native-toast-message": "^2.3.0",
+    "react-native-touchable-scale": "^2.2.0",
     "react-native-vision-camera": "^4.6.4"
   },
   "devDependencies": {
@@ -77,8 +78,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "patchedDependencies": {
-    "react-native-image-crop-picker@0.42.0": "patches/react-native-image-crop-picker@0.42.0.patch"
   }
 }
