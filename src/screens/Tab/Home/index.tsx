@@ -2,13 +2,13 @@ import React, {Fragment, useCallback, useEffect, useRef, useState} from 'react';
 import {Image, Keyboard, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {TimerPicker, TimerPickerRef} from 'react-native-timer-picker';
+import TouchableScale from 'react-native-touchable-scale';
 
 import {getGoal, getMemo, getMyStudyRooms, getStudyToday, setGoal, setMemo} from '@/api';
 import Card from '@/components/Card';
 import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
 import Loading from '@/components/Loading';
 import ProgressBar from '@/components/ProgressBar';
-import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 import {closeBottomSheet, openBottomSheet} from '@/lib/bottomSheetUtils';
@@ -179,13 +179,11 @@ const Home = () => {
                     </View>
                   )}
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.65} onPress={() => rootStackNavigation.navigate('Study')}>
-                  <TouchableScale>
-                    <View style={[{aspectRatio: 1, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, {backgroundColor: theme.background}]}>
-                      <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
-                    </View>
-                  </TouchableScale>
-                </TouchableOpacity>
+                <TouchableScale activeScale={0.96} tension={60} friction={3} onPress={() => rootStackNavigation.navigate('Study')}>
+                  <View style={[{aspectRatio: 1, padding: 20, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, {backgroundColor: theme.background}]}>
+                    <FontAwesome6 name="play" size={26} color={theme.primary} iconStyle="solid" />
+                  </View>
+                </TouchableScale>
               </View>
               {studyTimeLoading || refreshing ? (
                 <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
@@ -219,7 +217,7 @@ const Home = () => {
               ) : (
                 studyRooms.slice(0, 6).map(studyRoom => (
                   <TouchableOpacity key={studyRoom.room_id} activeOpacity={0.65} style={{width: '48%'}}>
-                    <TouchableScale>
+                    <TouchableScale activeScale={0.96} tension={60} friction={3} onPress={() => rootStackNavigation.navigate('StudyRoomDetail', {id: studyRoom.room_id})}>
                       <View style={[{padding: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center'}, {backgroundColor: theme.background}]}>
                         <Text style={[typography.body, {color: theme.text}, {fontWeight: '600'}]} numberOfLines={1} ellipsizeMode="tail">
                           {studyRoom.name}
