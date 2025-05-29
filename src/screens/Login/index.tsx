@@ -1,31 +1,31 @@
 import React, {useState} from 'react';
 import {Alert, Text, View} from 'react-native';
+import TouchableScale from 'react-native-touchable-scale';
 
 import GoogleSvg from '@/assets/images/google.svg';
 import LogoDarkSvg from '@/assets/images/logo_dark.svg';
 import LogoLightSvg from '@/assets/images/logo_light.svg';
 import Loading from '@/components/Loading';
-import TouchableScale from '@/components/TouchableScale';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 
 const Login = () => {
   const {signInWithGoogle} = useAuth();
   const {theme, typography, isDark} = useTheme();
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       await signInWithGoogle();
     } catch (err) {
       Alert.alert(`로그인에 실패했어요.\n${(err as Error).message}`);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  if (isLoading) {
+  if (loading) {
     return <Loading fullScreen />;
   }
 
@@ -34,7 +34,7 @@ const Login = () => {
       <View />
       <View>{isDark ? <LogoLightSvg /> : <LogoDarkSvg />}</View>
       <View style={{width: '100%'}}>
-        <TouchableScale onPress={handleSignIn}>
+        <TouchableScale onPress={handleSignIn} activeScale={0.96} tension={60} friction={3}>
           <View
             style={{
               flexDirection: 'row',

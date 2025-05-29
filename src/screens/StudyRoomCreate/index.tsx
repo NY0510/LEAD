@@ -34,10 +34,11 @@ const StudyRoomCreate = () => {
     try {
       if (openCamera) {
         _image = await ImagePicker.openCamera({
-          compressImageMaxWidth: 512,
-          compressImageMaxHeight: 512,
+          // compressImageMaxWidth: 512,
+          // compressImageMaxHeight: 512,
           cropping: true,
           forceJpg: true,
+          compressImageQuality: 1,
           enableRotationGesture: true,
           mediaType: 'photo',
           includeBase64: true,
@@ -45,9 +46,10 @@ const StudyRoomCreate = () => {
         });
       } else {
         _image = await ImagePicker.openPicker({
-          compressImageMaxWidth: 512,
-          compressImageMaxHeight: 512,
+          // compressImageMaxWidth: 512,
+          // compressImageMaxHeight: 512,
           freeStyleCropEnabled: true,
+          compressImageQuality: 1,
           cropping: true,
           forceJpg: true,
           enableRotationGesture: true,

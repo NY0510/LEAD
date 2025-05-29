@@ -104,6 +104,9 @@ export const updateStudy = async (uid: string, is_studying: boolean) => {
 export const getStudyRoom = async (id: string) => {
   try {
     const r = await httpClient.get(`/studyrooms/${id}`);
+    if (r.status === 404) {
+      return null;
+    }
     return r.data;
   } catch (error) {
     console.error('Error during getStudyRooms:', error);

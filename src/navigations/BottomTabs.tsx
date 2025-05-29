@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect} from 'react';
-import {GestureResponderEvent, Linking, TouchableOpacity} from 'react-native';
+import {GestureResponderEvent, Linking} from 'react-native';
+import TouchableScale from 'react-native-touchable-scale';
 
-import TouchableScale from '@/components/TouchableScale';
 import {useTheme} from '@/contexts/ThemeContext';
 import Analyze from '@/screens/Tab/Analyze';
 import Home from '@/screens/Tab/Home';
@@ -78,10 +78,10 @@ const BottomTabs = () => {
 
 const TabBarButton = ({children, onPress}: {children: React.ReactNode; onPress: (event?: GestureResponderEvent) => void}) => {
   return (
-    <TouchableScale scaleTo={0.9} onPress={onPress} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <TouchableOpacity activeOpacity={0.8} style={{justifyContent: 'center', alignItems: 'center'}}>
-        {children}
-      </TouchableOpacity>
+    <TouchableScale activeScale={0.95} tension={40} friction={3} onPress={onPress} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      {/* <TouchableOpacity activeOpacity={0.8} style={{justifyContent: 'center', alignItems: 'center'}}> */}
+      {children}
+      {/* </TouchableOpacity> */}
     </TouchableScale>
   );
 };

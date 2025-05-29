@@ -1,4 +1,4 @@
-import React, {StrictMode} from 'react';
+import React from 'react';
 import {Linking, StatusBar} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -20,7 +20,7 @@ const App = () => {
     config: {
       initialRouteName: 'Tab',
       screens: {
-        JoinStudyRoom: '/studyroom/join/:id',
+        StudyRoomJoin: '/studyroom/join/:id',
       },
     },
     async getInitialURL() {
