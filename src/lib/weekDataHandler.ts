@@ -1,5 +1,3 @@
-import {useState} from 'react';
-
 import {getGoal, getStudyByDateRange} from '@/api';
 
 const today = new Date();
@@ -16,11 +14,13 @@ const getEndOfWeek = (date: Date) => {
 };
 
 export const getWeekData = (uid: string, week: number) => {
-  const baseDate = new Date(today); // today를 복사하여 사용
-  const newStartDate = getStartOfWeek(new Date(baseDate.setDate(baseDate.getDate() + 7 * week)));
-  const newEndDate = getEndOfWeek(new Date(baseDate.setDate(baseDate.getDate() + 7 * week)));
-  console.log(week)
-  console.log(`${newStartDate} ~ ${newEndDate}`)
+  const baseDate = new Date(today);
+  const modifiedDate = new Date(baseDate);
+  modifiedDate.setDate(baseDate.getDate() + 7 * week);
+
+  const newStartDate = getStartOfWeek(modifiedDate);
+  const newEndDate = getEndOfWeek(new Date(modifiedDate));
+
   return getStudyByDateRange(uid, newStartDate, newEndDate);
 };
 
@@ -62,9 +62,13 @@ export const getGoalArr = async (uid: string, week: number): Promise<number[]> =
 };
 
 export const getWeekRange = (week: number) => {
-  const baseDate = new Date(today); // today를 복사하여 사용
-  const newStartDate = getStartOfWeek(new Date(baseDate.setDate(baseDate.getDate() + 7 * week)));
-  const newEndDate = getEndOfWeek(new Date(baseDate.setDate(baseDate.getDate() + 7 * week)));
+  const baseDate = new Date(today);
+  const modifiedDate = new Date(baseDate);
+
+  modifiedDate.setDate(modifiedDate.getDate() + 7 * week);
+
+  const newStartDate = getStartOfWeek(modifiedDate);
+  const newEndDate = getEndOfWeek(new Date(modifiedDate));
   return `${newStartDate} ~ ${newEndDate}`;
 };
 

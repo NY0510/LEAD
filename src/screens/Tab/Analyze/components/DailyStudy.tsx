@@ -12,8 +12,8 @@ import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 const DailyStudy = () => {
   const {user} = useAuth();
   const {theme, typography} = useTheme();
-  const [trueStudyHour, setTrueStudyHour] = useState<number>(10);
-  const [exceptionalHour, setExceptionalHour] = useState<number>(10);
+  const [trueStudyHour, setTrueStudyHour] = useState<number>(0);
+  const [exceptionalHour, setExceptionalHour] = useState<number>(0);
   const [totalHour, setTotalHour] = useState<number>(0);
   const today = new Date();
   const [startDate, setStartDate] = useState(today);
@@ -21,17 +21,22 @@ const DailyStudy = () => {
   const [yesterdayStudiedHour, setYesterdayHour] = useState<number>(0);
 
   const fetchData = async () => {
-    if (!user) {
-      return;
-    }
-    const data = await getStudyByDate(user.uid, startDate.toISOString().split('T')[0]);
-    const yesterdayData = await getStudyByDate(user.uid, yesterday.toISOString().split('T')[0]);
-    setYesterdayHour(yesterdayData.pure_study);
-    setTrueStudyHour(data.pure_study);
-    setExceptionalHour(data.non_study);
-    setTotalHour(data.total);
-  };
+    if (!user) return;
 
+    const dateString = startDate.toISOString().split('T')[0];
+    const yesterdayString = yesterday.toISOString().split('T')[0];
+
+    const data = await getStudyByDate(user.uid, dateString);
+    const yesterdayData = await getStudyByDate(user.uid, yesterdayString);
+
+    console.log('오늘 데이터:', data);
+    console.log('어제 데이터:', yesterdayData);
+
+    setTrueStudyHour(data?.pure_study ?? 0);
+    setExceptionalHour(data?.non_study ?? 0);
+    setTotalHour(data?.total ?? 0);
+    setYesterdayHour(yesterdayData?.pure_study ?? 0);
+  };
   const onLeftPressed = () => {
     const newDate = new Date(startDate);
     newDate.setDate(newDate.getDate() - 1);
@@ -48,8 +53,8 @@ const DailyStudy = () => {
   };
 
   const pieData = [
-    {value: trueStudyHour, color: '#EE902C'},
-    {value: exceptionalHour, color: '#344BFD'},
+    {value: trueStudyHour, color: '#344BFD'},
+    {value: exceptionalHour, color: '#EE902C'},
   ];
 
   return (

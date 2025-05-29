@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
-import {useTheme} from '@/contexts/ThemeContext';
 import {useAuth} from '@/contexts/AuthContext';
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import {getPureStudyArr,getNonStudyArr,getTotalStudyArr,getWeekRange,getWeekAvg} from '@/lib/weekDataHandler'
+import {useTheme} from '@/contexts/ThemeContext';
+import {calcPer, sumArr} from '@/lib/sol';
 import {formatTime} from '@/lib/timeUtils';
-import { sumArr , calcPer} from '@/lib/sol';
+import {getNonStudyArr, getPureStudyArr, getTotalStudyArr, getWeekAvg, getWeekRange} from '@/lib/weekDataHandler';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 
 const WeeklyStudy = () => {
   const {theme, typography} = useTheme();
@@ -22,26 +22,26 @@ const WeeklyStudy = () => {
     if (!user) {
       return;
     }
-    setPureStudy(await getPureStudyArr(user.uid,week))
-    setNonStudy(await getNonStudyArr(user.uid,week))
-    setTotalStudy(await getTotalStudyArr(user.uid,week))
-    setWeekAvg(await getWeekAvg(user.uid,week))
-    setPrivWeekAvg(await getWeekAvg(user.uid,week-1))
+    setPureStudy(await getPureStudyArr(user.uid, week));
+    setNonStudy(await getNonStudyArr(user.uid, week));
+    setTotalStudy(await getTotalStudyArr(user.uid, week));
+    setWeekAvg(await getWeekAvg(user.uid, week));
+    setPrivWeekAvg(await getWeekAvg(user.uid, week - 1));
   };
 
   const onLeftPressed = () => {
-    setWeek(week-1);
+    setWeek(week - 1);
     fetchData();
   };
   const onRightPressed = () => {
-    setWeek(week+1);
+    setWeek(week + 1);
     fetchData();
   };
 
   const stackData = pureStudy.map((val, i) => ({
     stacks: [
-      { value: val+10, color: '#EE902C' },
-      { value: nonStudy[i]+10, color: '#344BFD' }
+      {value: val + 10, color: '#EE902C'},
+      {value: nonStudy[i] + 10, color: '#344BFD'},
     ],
     label: ['월', '화', '수', '목', '금', '토', '일'][i],
   }));
@@ -68,7 +68,7 @@ const WeeklyStudy = () => {
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>지난주보다</Text>
-            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{formatTime(weekAvg-privWeekAvg)}</Text>
+            <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{formatTime(weekAvg - privWeekAvg)}</Text>
           </View>
         </View>
         <Chart
@@ -91,7 +91,7 @@ const WeeklyStudy = () => {
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
               <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{formatTime(sumArr(pureStudy))}</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{calcPer(sumArr(totalStudy),sumArr(pureStudy))}</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{calcPer(sumArr(totalStudy), sumArr(pureStudy))}</Text>
             </View>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -101,7 +101,7 @@ const WeeklyStudy = () => {
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
               <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(sumArr(nonStudy))}</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(sumArr(totalStudy),sumArr(nonStudy))}</Text>
+              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(sumArr(totalStudy), sumArr(nonStudy))}</Text>
             </View>
           </View>
         </View>
