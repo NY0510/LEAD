@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
@@ -18,15 +18,23 @@ const WeeklyStudy = () => {
   const [totalStudy, setTotalStudy] = useState([0]);
   const [weekAvg, setWeekAvg] = useState(0);
   const [privWeekAvg, setPrivWeekAvg] = useState(0);
+
   const fetchData = async () => {
     if (!user) {
       return;
     }
-    setPureStudy(await getPureStudyArr(user.uid, week));
-    setNonStudy(await getNonStudyArr(user.uid, week));
-    setTotalStudy(await getTotalStudyArr(user.uid, week));
-    setWeekAvg(await getWeekAvg(user.uid, week));
-    setPrivWeekAvg(await getWeekAvg(user.uid, week - 1));
+
+    const pureStudyData = await getPureStudyArr(user.uid, week);
+    const nonStudyData = await getNonStudyArr(user.uid, week);
+    const totalStudyData = await getTotalStudyArr(user.uid, week);
+    const weekAvgData = await getWeekAvg(user.uid, week);
+    const privWeekAvgData = await getWeekAvg(user.uid, week - 1);
+
+    setPureStudy(pureStudyData.map(item => item ?? 0));
+    setNonStudy(nonStudyData.map(item => item ?? 0));
+    setTotalStudy(totalStudyData.map(item => item ?? 0));
+    setWeekAvg(weekAvgData ?? 0);
+    setPrivWeekAvg(privWeekAvgData ?? 0);
   };
 
   const onLeftPressed = () => {
@@ -38,13 +46,20 @@ const WeeklyStudy = () => {
     fetchData();
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const stackData = pureStudy.map((val, i) => ({
     stacks: [
-      {value: val + 10, color: '#EE902C'},
-      {value: nonStudy[i] + 10, color: '#344BFD'},
+      {value: val, color: '#EE902C'},
+      {value: nonStudy[i], color: '#344BFD'},
     ],
     label: ['월', '화', '수', '목', '금', '토', '일'][i],
   }));
+
+  // 데이터가 0 또는 NaN이면 처리할 조건 추가
+  const isDataEmptyOrInvalid = pureStudy.every(val => val === 0 || isNaN(val)) && nonStudy.every(val => val === 0 || isNaN(val));
 
   return (
     <View style={{gap: 12}}>
@@ -71,40 +86,48 @@ const WeeklyStudy = () => {
             <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{formatTime(weekAvg - privWeekAvg)}</Text>
           </View>
         </View>
-        <Chart
-          chartType="bar"
-          barData={stackData.map(item => ({
-            ...item,
-            stacks: item.stacks.map((stack, index) => {
-              if (index === 0) {
-                return {...stack, borderRadius: 0};
-              }
-              return stack;
-            }),
-          }))}
-        />
-        <View style={{gap: 4, marginTop: 16}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-              <View style={{width: 15, height: 15, borderColor: '#344BFD', borderWidth: 3, borderRadius: 15 / 2}} />
-              <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
+
+        {/* 삼항 연산자 사용하여 데이터가 없으면 다른 UI를 렌더링 */}
+        {isDataEmptyOrInvalid ? (
+          <Text style={{color: theme.text}}>데이터가 없습니다</Text> // 데이터가 없을 때 표시할 메시지
+        ) : (
+          <>
+            <Chart
+              chartType="bar"
+              barData={stackData.map(item => ({
+                ...item,
+                stacks: item.stacks.map((stack, index) => {
+                  if (index === 0) {
+                    return {...stack, borderRadius: 0};
+                  }
+                  return stack;
+                }),
+              }))}
+            />
+            <View style={{gap: 4, marginTop: 16}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <View style={{width: 15, height: 15, borderColor: '#344BFD', borderWidth: 3, borderRadius: 15 / 2}} />
+                  <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
+                  <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{formatTime(sumArr(pureStudy))}</Text>
+                  <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{calcPer(sumArr(totalStudy), sumArr(pureStudy)) + '%'}</Text>
+                </View>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <View style={{width: 15, height: 15, borderColor: '#EE902C', borderWidth: 3, borderRadius: 15 / 2}} />
+                  <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
+                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(sumArr(nonStudy))}</Text>
+                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(sumArr(totalStudy), sumArr(nonStudy)) + '%'}</Text>
+                </View>
+              </View>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-              <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{formatTime(sumArr(pureStudy))}</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{calcPer(sumArr(totalStudy), sumArr(pureStudy))}</Text>
-            </View>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-              <View style={{width: 15, height: 15, borderColor: '#EE902C', borderWidth: 3, borderRadius: 15 / 2}} />
-              <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(sumArr(nonStudy))}</Text>
-              <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(sumArr(totalStudy), sumArr(nonStudy))}</Text>
-            </View>
-          </View>
-        </View>
+          </>
+        )}
       </View>
     </View>
   );

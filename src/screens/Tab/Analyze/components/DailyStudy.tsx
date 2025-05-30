@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
@@ -14,6 +14,7 @@ const DailyStudy = () => {
   const {theme, typography} = useTheme();
   const [trueStudyHour, setTrueStudyHour] = useState<number>(0);
   const [exceptionalHour, setExceptionalHour] = useState<number>(0);
+  const [non, setNon] = useState<number>(0);
   const [totalHour, setTotalHour] = useState<number>(0);
   const today = new Date();
   const [startDate, setStartDate] = useState(today);
@@ -28,15 +29,20 @@ const DailyStudy = () => {
 
     const data = await getStudyByDate(user.uid, dateString);
     const yesterdayData = await getStudyByDate(user.uid, yesterdayString);
+    // null 또는 undefined일 경우 0으로 대체
+    setTrueStudyHour(data?.pure_study ?? 0); // pure_study 값 처리
+    setExceptionalHour(data?.non_study ?? 0); // non_study 값 처리
+    setTotalHour(data?.total ?? 0); // total 값 처리
+    setYesterdayHour(yesterdayData?.pure_study ?? 0); // 어제의 pure_study 값 처리
 
-    console.log('오늘 데이터:', data);
-    console.log('어제 데이터:', yesterdayData);
-
-    setTrueStudyHour(data?.pure_study ?? 0);
-    setExceptionalHour(data?.non_study ?? 0);
-    setTotalHour(data?.total ?? 0);
-    setYesterdayHour(yesterdayData?.pure_study ?? 0);
+    // totalHour가 null이나 undefined일 경우 10을 설정
+    if (!data?.total) {
+      setNon(10);
+    } else {
+      setNon(0);
+    }
   };
+
   const onLeftPressed = () => {
     const newDate = new Date(startDate);
     newDate.setDate(newDate.getDate() - 1);
@@ -51,10 +57,14 @@ const DailyStudy = () => {
     setYesterday(new Date(startDate.getDate() - 1));
     fetchData();
   };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const pieData = [
     {value: trueStudyHour, color: '#344BFD'},
     {value: exceptionalHour, color: '#EE902C'},
+    {value: non, color: '#C6CED1'},
   ];
 
   return (
