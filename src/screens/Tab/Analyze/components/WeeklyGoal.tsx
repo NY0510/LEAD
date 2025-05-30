@@ -82,7 +82,7 @@ const WeeklyGoal = () => {
           </View>
           <View style={{alignItems: 'flex-end'}}>
             <Text style={[typography.body, {color: theme.text}]}>지난주보다</Text>
-            <Text style={[typography.body, {color: '#ff7171', fontWeight: 500}]}>{addSign(calcAvgPer(totalStudy, goal) - calcAvgPer(privTotalStudy, privGoal))}</Text>
+            <Text style={[typography.body, {color: '#ff7171', fontWeight: 500}]}>{addSign(calcAvgPer(totalStudy, goal) - calcAvgPer(privTotalStudy, privGoal)) + '%'}</Text>
           </View>
         </View>
 
