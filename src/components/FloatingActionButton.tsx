@@ -14,7 +14,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({icon, onPres
 
   return (
     <TouchableOpacity
-      activeOpacity={0.65}
+      activeOpacity={0.9}
       onPress={onPress}
       style={[
         {

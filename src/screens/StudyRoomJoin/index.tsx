@@ -36,7 +36,7 @@ const CustomHandle: React.FC<BottomSheetHandleProps & {studyRoom: StudyRoomType}
 
   return (
     <BottomSheetHandle animatedIndex={animatedIndex} animatedPosition={animatedPosition} style={{backgroundColor: theme.background, borderTopLeftRadius: 16, borderTopRightRadius: 16}}>
-      <Animated.View style={[animatedStyle, {position: 'absolute', bottom: useSafeAreaInsets().bottom + 8, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', width: Dimensions.get('window').width}]}>
+      <Animated.View style={[animatedStyle, {position: 'absolute', bottom: useSafeAreaInsets().bottom + 32, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', width: Dimensions.get('window').width}]}>
         <View>
           <Text style={[typography.title, {color: theme.card, fontSize: toDP(28)}]}>{studyRoom.name}</Text>
           <Text style={[typography.subtitle, {color: theme.inactive, fontSize: toDP(22)}]}>{studyRoom.description || '공부방 설명이 없어요.'}</Text>
@@ -104,7 +104,7 @@ const CustomFooter: React.FC<BottomSheetFooterProps & {handleJoin: () => void}> 
 
   return (
     <BottomSheetFooter animatedFooterPosition={animatedFooterPosition}>
-      <TouchableOpacity activeOpacity={0.65} style={{padding: 16, backgroundColor: theme.inactive, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8}} onPress={handleJoin}>
+      <TouchableOpacity activeOpacity={0.65} style={{padding: 16, backgroundColor: theme.border, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8}} onPress={handleJoin}>
         <FontAwesome6 name="user-plus" iconStyle="solid" size={16} color={theme.text} />
         <Text style={[typography.subtitle, {color: theme.text}]}>참여하기</Text>
       </TouchableOpacity>

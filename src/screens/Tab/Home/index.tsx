@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback, useEffect, useRef, useState} from 'react';
-import {Image, Keyboard, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Keyboard, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {TimerPicker, TimerPickerRef} from 'react-native-timer-picker';
 import TouchableScale from 'react-native-touchable-scale';
@@ -262,7 +262,7 @@ const Home = () => {
         </View>
       </ScrollView>
 
-      <CustomBottomSheet ref={studyTimeBottomSheetRef} handleComponent={null}>
+      <CustomBottomSheet ref={studyTimeBottomSheetRef} handleComponent={null} keyboardBlurBehavior="restore" enableContentPanningGesture={false}>
         <CustomBottomSheetView>
           <View style={{gap: 4}}>
             <Text style={[typography.subtitle, {fontWeight: '700', fontSize: 20, color: theme.text}]}>목표 공부 시간 변경</Text>
@@ -315,12 +315,13 @@ const Home = () => {
         </CustomBottomSheetView>
       </CustomBottomSheet>
 
-      <CustomBottomSheet ref={memoBottomSheetRef} handleComponent={null}>
+      <CustomBottomSheet ref={memoBottomSheetRef} handleComponent={null} keyboardBehavior="interactive">
         <CustomBottomSheetView>
           <Text style={[typography.subtitle, {color: theme.text, fontWeight: '700', fontSize: 20}]}>메모 입력</Text>
           <View style={{flex: 1, width: '100%'}}>
             <BottomSheetTextInput
               style={{
+                flex: 1,
                 minHeight: 80,
                 borderColor: theme.inactive,
                 borderWidth: 1,
@@ -330,6 +331,7 @@ const Home = () => {
                 backgroundColor: theme.background,
                 ...typography.body,
               }}
+              textAlignVertical="top"
               multiline
               value={memoState}
               onChangeText={setMemoState}
@@ -339,7 +341,7 @@ const Home = () => {
           </View>
           <TouchableOpacity
             activeOpacity={0.65}
-            style={[{borderRadius: 8, paddingVertical: 12, paddingHorizontal: 32, alignSelf: 'stretch', alignItems: 'center'}, {backgroundColor: theme.primary}]}
+            style={[{flex: 1, borderRadius: 8, paddingVertical: 12, paddingHorizontal: 32, alignSelf: 'stretch', alignItems: 'center'}, {backgroundColor: theme.primary}]}
             onPress={async () => {
               if (memoState.length > 100) {
                 return showToast('메모는 100자 이내로 작성해주세요.');
