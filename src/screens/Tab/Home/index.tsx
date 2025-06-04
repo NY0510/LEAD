@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback, useEffect, useRef, useState} from 'react';
-import {Image, Keyboard, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Image, Keyboard, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {TimerPicker, TimerPickerRef} from 'react-native-timer-picker';
 import TouchableScale from 'react-native-touchable-scale';
@@ -136,7 +136,7 @@ const Home = () => {
 
   return (
     <Fragment>
-      <ScrollView contentContainerStyle={{padding: 18}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+      <ScrollView contentContainerStyle={{padding: 18, paddingTop: 32}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
         <View style={{gap: 22}}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
             <View style={{flexWrap: 'wrap'}}>
