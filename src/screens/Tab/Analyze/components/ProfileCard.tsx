@@ -25,8 +25,11 @@ const ProfileCard = () => {
 
     try {
       setLoading(true);
-      setStudiedHour(sumArr(await getPureStudyArr(user.uid, 0)));
-      setTotalHour(sumArr(await getTotalStudyArr(user.uid, 0)));
+      const pureStudyData = await getPureStudyArr(user.uid, 0);
+      const totalStudyData = await getTotalStudyArr(user.uid, 0);
+
+      setStudiedHour(sumArr(pureStudyData));
+      setTotalHour(sumArr(totalStudyData));
     } catch (error) {
       console.error('Error fetching profile data:', error);
     } finally {
@@ -38,17 +41,22 @@ const ProfileCard = () => {
     fetchData();
   }, [fetchData, refreshTrigger]);
 
+  // 주간 평균 집중도 계산
+  const weeklyConcentration = weeklyTotalHour > 0 ? calcPer(weeklyTotalHour, weeklyStudiedHour) : 0;
+
   return (
     <View style={{backgroundColor: theme.card, borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12}}>
       {loading ? (
-        <Loading />
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Loading fullScreen={false} />
+        </View>
       ) : (
         <>
           <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
           <View style={{flexShrink: 1}}>
             <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>{user?.displayName}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
-              <Text style={[typography.body, {color: theme.red, fontWeight: '600'}]}>평균 집중도 {calcPer(weeklyTotalHour, weeklyStudiedHour)}%</Text>
+              <Text style={[typography.body, {color: theme.red, fontWeight: '600'}]}>주간 평균 집중도 {weeklyConcentration}%</Text>
               <FireSvg width={16} height={16} />
             </View>
           </View>

@@ -60,7 +60,7 @@ const Chart = ({pieData, barData, chartType}: Props) => {
           }}
         />
       ) : (
-        <PieChart donut data={pieData ?? []} innerRadius={62} />
+        <PieChart donut data={pieData ?? []} innerRadius={62} backgroundColor={theme.card} />
       )}
     </View>
   );

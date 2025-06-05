@@ -87,7 +87,7 @@ const WeeklyStudy = () => {
           <FontAwesome6 name="angle-right" size={22} color={theme.text} iconStyle="solid" />
         </TouchableOpacity>
       </View>
-      <View style={{backgroundColor: '#ffffff', borderRadius: 12, paddingHorizontal: 24, paddingVertical: 18, gap: 8, minHeight: 320}}>
+      <View style={{backgroundColor: theme.card, borderRadius: 12, paddingHorizontal: 24, paddingVertical: 18, gap: 8}}>
         {loading ? (
           <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <Loading fullScreen={false} />
