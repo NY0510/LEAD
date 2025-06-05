@@ -3,7 +3,7 @@ import {StyleProp, ViewStyle} from 'react-native';
 
 import {useTheme} from '@/contexts/ThemeContext';
 import {useRenderBackdrop} from '@/lib/bottomSheetUtils';
-import BottomSheet, {BottomSheetProps, BottomSheetView} from '@gorhom/bottom-sheet';
+import BottomSheet, {BottomSheetProps, BottomSheetScrollView, BottomSheetView} from '@gorhom/bottom-sheet';
 import type {BottomSheetViewProps} from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetView/types';
 
 export const CustomBottomSheet = forwardRef<BottomSheet, BottomSheetProps>((props, ref) => {
@@ -18,6 +18,25 @@ export const CustomBottomSheetView: React.FC<BottomSheetViewProps> = ({style, ..
   const {theme} = useTheme();
   return (
     <BottomSheetView
+      style={[
+        {
+          padding: 24,
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+          gap: 16,
+          backgroundColor: theme.card,
+        },
+        style,
+      ]}
+      {...rest}
+    />
+  );
+};
+
+export const CustomBottomSheetScrollView: React.FC<BottomSheetViewProps> = ({style, ...rest}) => {
+  const {theme} = useTheme();
+  return (
+    <BottomSheetScrollView
       style={[
         {
           padding: 24,

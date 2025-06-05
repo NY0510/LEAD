@@ -10,6 +10,7 @@ export interface StudyRoom {
 
 export interface User {
   uid: string;
+  username: string;
   memo?: string;
   current_daily_goal: number;
 }

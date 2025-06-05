@@ -55,7 +55,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
       const {idToken} = await GoogleSignin.getTokens();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const userCredential = await auth().signInWithCredential(googleCredential);
-      await signup(userCredential.user.uid);
+      await signup(userCredential.user.uid, userCredential.user.displayName || '');
 
       return userCredential.user;
     } catch (error) {

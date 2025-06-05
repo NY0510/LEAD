@@ -1,11 +1,23 @@
 import httpClient from './httpClient';
 
-export const signup = async (uid: string) => {
+// 회원 가입
+export const signup = async (uid: string, username: string) => {
   try {
-    const r = await httpClient.post('/users/signup', {uid});
+    const r = await httpClient.post('/users/signup', {uid, username});
     return r.data;
   } catch (error) {
     console.error('Error during signup:', error);
+    throw error;
+  }
+};
+
+// 사용자 정보 조회
+export const getUserInfo = async (uid: string) => {
+  try {
+    const r = await httpClient.get(`/users/${uid}`);
+    return r.data;
+  } catch (error) {
+    console.error('Error during getUserInfo:', error);
     throw error;
   }
 };

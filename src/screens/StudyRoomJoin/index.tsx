@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, {Fragment, useEffect, useMemo, useRef, useState} from 'react';
-import {Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Dimensions, ImageBackground, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, {Extrapolate, interpolate, useAnimatedStyle} from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Share from 'react-native-share';
 
 import {getMyStudyRooms, getStudyRoom, joinStudyRoom} from '@/api';
-import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
+import {CustomBottomSheet, CustomBottomSheetScrollView} from '@/components/CustomBottomSheet';
 import Loading from '@/components/Loading';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
@@ -16,7 +16,7 @@ import {showToast} from '@/lib/toast';
 import {RootStackParamList} from '@/navigations/RootStacks';
 import {toDP} from '@/theme/typography';
 import {StudyRoom as StudyRoomType} from '@/types/api';
-import BottomSheet, {BottomSheetFooter, BottomSheetFooterProps, BottomSheetHandle} from '@gorhom/bottom-sheet';
+import BottomSheet, {BottomSheetFooter, BottomSheetFooterProps, BottomSheetHandle, BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {BottomSheetBackdropProps} from '@gorhom/bottom-sheet';
 import {BottomSheetHandleProps} from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,6 +26,9 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 const CustomHandle: React.FC<BottomSheetHandleProps & {studyRoom: StudyRoomType}> = ({studyRoom, animatedIndex, animatedPosition}) => {
   const {theme, typography} = useTheme();
   const {user} = useAuth();
+  const insets = useSafeAreaInsets();
+
+  const bottomPadding = Platform.OS === 'ios' ? insets.bottom + 32 : Math.max(insets.bottom + 32, 50);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -35,11 +38,11 @@ const CustomHandle: React.FC<BottomSheetHandleProps & {studyRoom: StudyRoomType}
   });
 
   return (
-    <BottomSheetHandle animatedIndex={animatedIndex} animatedPosition={animatedPosition} style={{backgroundColor: theme.background, borderTopLeftRadius: 16, borderTopRightRadius: 16}}>
-      <Animated.View style={[animatedStyle, {position: 'absolute', bottom: useSafeAreaInsets().bottom + 32, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', width: Dimensions.get('window').width}]}>
+    <BottomSheetHandle animatedIndex={animatedIndex} animatedPosition={animatedPosition} style={{backgroundColor: theme.background, borderTopLeftRadius: 16, borderTopRightRadius: 16}} indicatorStyle={{backgroundColor: theme.text}}>
+      <Animated.View style={[animatedStyle, {position: 'absolute', bottom: bottomPadding, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', width: Dimensions.get('window').width}]}>
         <View>
-          <Text style={[typography.title, {color: theme.card, fontSize: toDP(28)}]}>{studyRoom.name}</Text>
-          <Text style={[typography.subtitle, {color: theme.inactive, fontSize: toDP(22)}]}>{studyRoom.description || '공부방 설명이 없어요.'}</Text>
+          <Text style={[typography.title, {color: '#FFFFFF', fontSize: toDP(28), fontWeight: '700'}]}>{studyRoom.name}</Text>
+          <Text style={[typography.subtitle, {color: '#F5F5F5', fontSize: toDP(22)}]}>{studyRoom.description || '공부방 설명이 없어요.'}</Text>
         </View>
         <View>
           <TouchableOpacity
@@ -72,7 +75,7 @@ const CustomHandle: React.FC<BottomSheetHandleProps & {studyRoom: StudyRoomType}
 };
 
 const CustomBackdrop: React.FC<BottomSheetBackdropProps & {studyRoom: StudyRoomType}> = ({animatedIndex, style, studyRoom}) => {
-  const {theme, typography} = useTheme();
+  const {typography} = useTheme();
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(animatedIndex.value, [0, 1], [0, 1], Extrapolate.CLAMP),
   }));
@@ -87,10 +90,10 @@ const CustomBackdrop: React.FC<BottomSheetBackdropProps & {studyRoom: StudyRoomT
   return (
     <Animated.View style={containerStyle}>
       <ImageBackground source={studyRoom.cover_image ? {uri: studyRoom.cover_image} : require('@/assets/images/studyroom_default.jpg')} style={StyleSheet.absoluteFillObject} resizeMode="cover">
-        <View style={{...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.5)'}} />
+        <View style={{...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.6)'}} />
         <Animated.View style={[textAnimatedStyle, {paddingHorizontal: 16, paddingVertical: 32}]}>
-          <Text style={[typography.title, {color: theme.card, fontSize: toDP(28)}]}>{studyRoom.name}</Text>
-          <Text style={[typography.subtitle, {color: theme.inactive}]}>
+          <Text style={[typography.title, {color: '#FFFFFF', fontSize: toDP(28), fontWeight: '700'}]}>{studyRoom.name}</Text>
+          <Text style={[typography.subtitle, {color: '#F5F5F5'}]}>
             참여자 {studyRoom.participants.length}명 ⋅ 개설일 {studyRoom.created_at ? new Date(studyRoom.created_at).toLocaleDateString() : '알 수 없음'}
           </Text>
         </Animated.View>
@@ -203,13 +206,83 @@ const StudyRoomJoin = () => {
         handleComponent={props => <CustomHandle {...props} studyRoom={studyRoom} />}
         backdropComponent={props => <CustomBackdrop {...props} studyRoom={studyRoom} />}
         footerComponent={props => <CustomFooter {...props} handleJoin={handleJoin} />}
-        snapPoints={['30%', '70%']}
+        snapPoints={['40%', '80%']}
         enablePanDownToClose={false}
         enableDynamicSizing={false}
         animateOnMount={false}>
-        <CustomBottomSheetView style={{backgroundColor: theme.background, flex: 1}}>
-          <Text style={[typography.title, {color: theme.text}]}>여기뭐넣지</Text>
-        </CustomBottomSheetView>
+        <CustomBottomSheetScrollView style={{backgroundColor: theme.background, flex: 1, paddingHorizontal: 16, paddingTop: 20, borderTopLeftRadius: 0, borderTopRightRadius: 0}}>
+          <View style={{gap: 20, flex: 1}}>
+            <View style={{gap: 16}}>
+              <Text style={[typography.title, {color: theme.text, fontSize: toDP(22), fontWeight: '700'}]}>공부방 정보</Text>
+              <View style={{backgroundColor: theme.card, borderRadius: 12, padding: 16, gap: 12}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <FontAwesome6 name="users" iconStyle="solid" size={16} color={theme.primary} />
+                  <Text style={[typography.body, {color: theme.text, fontWeight: '600'}]}>참여자</Text>
+                  <Text style={[typography.body, {color: theme.secondary, marginLeft: 'auto'}]}>{studyRoom.participants.length}명</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                  <FontAwesome6 name="calendar" iconStyle="solid" size={16} color={theme.primary} />
+                  <Text style={[typography.body, {color: theme.text, fontWeight: '600'}]}>개설일</Text>
+                  <Text style={[typography.body, {color: theme.secondary, marginLeft: 'auto'}]}>{studyRoom.created_at ? new Date(studyRoom.created_at).toLocaleDateString() : '알 수 없음'}</Text>
+                </View>
+                {studyRoom.description && (
+                  <View style={{gap: 8}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                      <FontAwesome6 name="quote-left" iconStyle="solid" size={16} color={theme.primary} />
+                      <Text style={[typography.body, {color: theme.text, fontWeight: '600'}]}>설명</Text>
+                    </View>
+                    <Text style={[typography.body, {color: theme.secondary, lineHeight: 20, marginLeft: 24}]}>{studyRoom.description}</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            <View style={{gap: 16, flex: 1}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Text style={[typography.title, {color: theme.text, fontSize: toDP(22), fontWeight: '700'}]}>참가자 목록</Text>
+                <Text style={[typography.body, {color: theme.secondary}]}>{studyRoom.participants.length}명이 함께하고 있어요</Text>
+              </View>
+
+              {studyRoom.participants.length > 0 ? (
+                <View style={{gap: 12, flex: 1}}>
+                  {studyRoom.participants.map((participantId, index) => (
+                    <View
+                      key={participantId}
+                      style={{
+                        backgroundColor: theme.card,
+                        borderRadius: 12,
+                        padding: 16,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 12,
+                      }}>
+                      <View style={{flex: 1}}>
+                        <Text style={[typography.body, {color: theme.text, fontWeight: '600', fontSize: toDP(16)}]}>참가자 {index + 1}</Text>
+                        <Text style={[typography.body, {color: theme.secondary, fontSize: toDP(14)}]}>함께 공부하는 멤버</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16}}>
+                  <FontAwesome6 name="user-plus" iconStyle="solid" size={48} color={theme.inactive} />
+                  <View style={{alignItems: 'center', gap: 4}}>
+                    <Text style={[typography.body, {color: theme.text, fontWeight: '600'}]}>아직 참가자가 없어요</Text>
+                    <Text style={[typography.body, {color: theme.secondary, textAlign: 'center'}]}>첫 번째 참가자가 되어주세요!</Text>
+                  </View>
+                </View>
+              )}
+            </View>
+
+            <View style={{backgroundColor: `${theme.primary}15`, borderRadius: 12, padding: 16, gap: 8, marginBottom: 80}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                <FontAwesome6 name="circle-info" iconStyle="solid" size={16} color={theme.primary} />
+                <Text style={[typography.body, {color: theme.primary, fontWeight: '600'}]}>공부방 참여 안내</Text>
+              </View>
+              <Text style={[typography.body, {color: theme.text, lineHeight: 20, fontSize: toDP(14)}]}>공부방에 참여하면 다른 멤버들과 함께 집중력을 기록하고 서로 동기부여를 받을 수 있어요.</Text>
+            </View>
+          </View>
+        </CustomBottomSheetScrollView>
       </CustomBottomSheet>
     </Fragment>
   );

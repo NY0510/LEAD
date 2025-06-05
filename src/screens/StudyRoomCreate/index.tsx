@@ -105,7 +105,7 @@ const StudyRoomCreate = () => {
 
             <View style={{gap: 8, width: '100%'}}>
               <View style={{backgroundColor: theme.card, borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12}}>
-                <TextInput ref={nameTextInputRef} placeholder="공부방 이름 (필수)" style={[typography.body, {flex: 1}]} textAlignVertical="top" maxLength={30} value={name} onChangeText={setName} />
+                <TextInput ref={nameTextInputRef} placeholder="공부방 이름 (필수)" style={[typography.body, {flex: 1, color: theme.text}]} textAlignVertical="top" maxLength={30} value={name} onChangeText={setName} />
                 <View style={{flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center'}}>
                   {name.length > 0 && (
                     <TouchableOpacity activeOpacity={0.65} onPress={() => setName('')}>
@@ -120,7 +120,7 @@ const StudyRoomCreate = () => {
               </View>
 
               <View style={{backgroundColor: theme.card, borderRadius: 8, flexDirection: 'row', alignItems: 'flex-end', gap: 12, padding: 12}}>
-                <TextInput ref={nameTextInputRef} placeholder="설명" style={[typography.body, {flex: 1, minHeight: 80}]} textAlignVertical="top" maxLength={50} multiline value={description} onChangeText={setDescription} />
+                <TextInput ref={nameTextInputRef} placeholder="설명" style={[typography.body, {flex: 1, minHeight: 80, color: theme.text}]} textAlignVertical="top" maxLength={50} multiline value={description} onChangeText={setDescription} />
                 <View style={{flexDirection: 'row', gap: 8, alignItems: 'center'}}>
                   <View style={{flexDirection: 'row'}}>
                     <Text style={[typography.baseTextStyle, {color: theme.text}]}>{description.length}</Text>
