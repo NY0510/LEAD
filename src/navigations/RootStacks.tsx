@@ -51,6 +51,7 @@ const RootStacks = () => {
         headerStatusBarHeight: 0,
         headerTitleAlign: 'left',
         headerTitleStyle: [typography.body, {color: theme.text, fontWeight: '500', fontSize: toDP(18)}],
+        headerTintColor: theme.text,
         headerStyle: {
           backgroundColor: theme.background,
           shadowColor: 'transparent',
