@@ -327,6 +327,7 @@ const Home = () => {
                 borderWidth: 1,
                 borderRadius: 8,
                 padding: 12,
+
                 color: theme.text,
                 backgroundColor: theme.background,
                 ...typography.body,

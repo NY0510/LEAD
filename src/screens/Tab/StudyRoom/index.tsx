@@ -149,7 +149,7 @@ const StudyRoom = () => {
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 14}}>
             <View style={{flexDirection: 'row', alignItems: 'center', flex: 1, gap: 8, padding: 8, borderWidth: 1, borderColor: theme.border, borderRadius: 8}}>
               <FontAwesome6 name="magnifying-glass" iconStyle="solid" size={20} color={theme.secondary} />
-              <TextInput placeholder="이름 및 설명으로 검색" maxLength={30} placeholderTextColor={theme.secondary} style={[typography.body, {color: theme.text, flexShrink: 1, flex: 1}]} value={searchQuery} onChangeText={setSearchQuery} />
+              <TextInput placeholder="이름 및 설명으로 검색" maxLength={30} placeholderTextColor={theme.secondary} style={[typography.body, {color: theme.text, flexShrink: 1, flex: 1, padding: 0, margin: 0}]} value={searchQuery} onChangeText={setSearchQuery} />
               {searchQuery.length > 0 && (
                 <TouchableOpacity activeOpacity={0.65} onPress={() => setSearchQuery('')}>
                   <FontAwesome6 name="circle-xmark" iconStyle="solid" size={18} color={theme.secondary} />
