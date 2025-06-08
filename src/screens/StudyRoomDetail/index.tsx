@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ImageBackground, ScrollView, StyleSheet, Text, View} from 'react-native';
 
-import {getStudyRoom, getUserInfo} from '@/api';
+import {getStudyRoom, getStudyToday, getUserInfo} from '@/api';
 import Card from '@/components/Card';
 import Loading from '@/components/Loading';
 import {useTheme} from '@/contexts/ThemeContext';
@@ -10,7 +10,7 @@ import {showToast} from '@/lib/toast';
 import {getPureStudyArr, getTotalStudyArr} from '@/lib/weekDataHandler';
 import {RootStackParamList} from '@/navigations/RootStacks';
 import {toDP} from '@/theme/typography';
-import {StudyRoom as StudyRoomType, User} from '@/types/api';
+import {StudyRecord, StudyRoom as StudyRoomType, User} from '@/types/api';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 
@@ -23,6 +23,7 @@ const StudyRoomDetail = () => {
   const [studyRoom, setStudyRoom] = useState<StudyRoomType | null>(null);
   const [participants, setParticipants] = useState<User[]>([]);
   const [participantConcentrations, setParticipantConcentrations] = useState<{[uid: string]: number}>({});
+  const [participantStudyData, setParticipantStudyData] = useState<{[uid: string]: StudyRecord}>({});
   const [loading, setLoading] = useState(true);
   const [participantsLoading, setParticipantsLoading] = useState(false);
 
@@ -61,9 +62,7 @@ const StudyRoomDetail = () => {
       try {
         const participantPromises = studyRoom.participants.map(uid => getUserInfo(uid));
         const participantData = await Promise.all(participantPromises);
-        setParticipants(participantData);
-
-        // 각 참가자의 평균 집중도 계산
+        setParticipants(participantData); // 각 참가자의 평균 집중도 계산
         const concentrationPromises = studyRoom.participants.map(async uid => {
           try {
             const pureStudyData = await getPureStudyArr(uid, 0);
@@ -88,6 +87,28 @@ const StudyRoomDetail = () => {
         );
 
         setParticipantConcentrations(concentrationMap);
+
+        // 각 참가자의 오늘 공부 데이터 가져오기
+        const studyDataPromises = studyRoom.participants.map(async uid => {
+          try {
+            const todayStudyData = await getStudyToday(uid);
+            return {uid, studyData: todayStudyData};
+          } catch (error) {
+            console.error(`Error fetching today's study data for ${uid}:`, error);
+            return {uid, studyData: null};
+          }
+        });
+
+        const studyDataResults = await Promise.all(studyDataPromises);
+        const studyDataMap = studyDataResults.reduce(
+          (acc, {uid, studyData}) => {
+            acc[uid] = studyData;
+            return acc;
+          },
+          {} as {[uid: string]: any},
+        );
+
+        setParticipantStudyData(studyDataMap);
       } catch (e) {
         showToast(`참가자 정보 조회에 실패했어요.\n${(e as Error).message}`);
       } finally {
@@ -143,20 +164,21 @@ const StudyRoomDetail = () => {
               participants.map(participant => {
                 const concentration = participantConcentrations[participant.uid] || 0;
                 const concentrationColor = concentration >= 80 ? '#4CAF50' : concentration >= 60 ? '#FF9800' : '#F44336';
+                const studyData = participantStudyData[participant.uid];
 
                 return (
                   <Card key={participant.uid} title={participant.username} titleStyle={{color: theme.text, fontSize: toDP(16), fontWeight: '700'}} style={{gap: 12, backgroundColor: theme.card, borderColor: theme.border, borderRadius: 16}}>
-                    <View style={{gap: 8}}>
-                      {/* 집중도 표시 */}
+                    <View style={{gap: 2}}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <Text style={[typography.body, {color: theme.secondary, fontSize: toDP(14), fontWeight: '500'}]}>주간 평균 집중도</Text>
                         <Text style={[typography.body, {color: concentrationColor, fontSize: toDP(14), fontWeight: '700'}]}>{concentration}%</Text>
                       </View>
 
-                      {/* 일일 목표 */}
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                        <Text style={[typography.body, {color: theme.secondary, fontSize: toDP(14), fontWeight: '500'}]}>일일 목표</Text>
-                        <Text style={[typography.body, {color: theme.text, fontSize: toDP(14), fontWeight: '600'}]}>{participant.current_daily_goal}분</Text>
+                        <Text style={[typography.body, {color: theme.secondary, fontSize: toDP(14), fontWeight: '500'}]}>오늘 순공 시간</Text>
+                        <Text style={[typography.body, {color: theme.text, fontSize: toDP(14), fontWeight: '600'}]}>
+                          {studyData.pure_study ? `${studyData.pure_study}분` : 'N/A'} / {participant.current_daily_goal ? `${participant.current_daily_goal}분` : 'N/A'}
+                        </Text>
                       </View>
                     </View>
                   </Card>

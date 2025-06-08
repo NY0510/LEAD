@@ -111,7 +111,7 @@ const Home = () => {
 
       await Promise.all([fetchTodayStudyData(), fetchMemo(), fetchStudyRooms()]);
     })();
-  }, [fetchMemo, fetchStudyRooms, fetchTodayStudyData, user]);
+  }, [fetchMemo, fetchStudyRooms, fetchTodayStudyData, user, goalStudyTime]);
 
   // 달성률 계산
   useEffect(() => setAchievement(goalStudyTime && pureStudyTime ? pureStudyTime / goalStudyTime : 0), [goalStudyTime, pureStudyTime]);
@@ -296,7 +296,7 @@ const Home = () => {
           <TouchableOpacity
             activeOpacity={0.65}
             style={[{borderRadius: 8, paddingVertical: 12, paddingHorizontal: 32, alignSelf: 'stretch', alignItems: 'center'}, {backgroundColor: theme.primary}]}
-            onPress={() => {
+            onPress={async () => {
               const latestDuration = timerPickerRef.current?.latestDuration;
               const hours = latestDuration?.hours?.current || timePickerValue.hours;
               const minutes = latestDuration?.minutes?.current || timePickerValue.minutes;
@@ -306,7 +306,7 @@ const Home = () => {
 
               const newGoal = hours * 60 + minutes;
               setGoalStudyTime(newGoal);
-              setGoal(user!.uid, newGoal);
+              await setGoal(user!.uid, newGoal);
               closeBottomSheet(studyTimeBottomSheetRef);
               showToast('목표 공부 시간이 변경되었어요.');
             }}>
