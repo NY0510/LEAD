@@ -6,7 +6,7 @@ import Animated, {Extrapolate, interpolate, useAnimatedStyle} from 'react-native
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Share from 'react-native-share';
 
-import {getMyStudyRooms, getStudyRoom, joinStudyRoom} from '@/api';
+import {getMyStudyRooms, getStudyRoom, getUserInfo, joinStudyRoom} from '@/api';
 import {CustomBottomSheet, CustomBottomSheetScrollView} from '@/components/CustomBottomSheet';
 import Loading from '@/components/Loading';
 import {useAuth} from '@/contexts/AuthContext';
@@ -59,7 +59,6 @@ const CustomHandle: React.FC<BottomSheetHandleProps & {studyRoom: StudyRoomType}
                 await Share.open({
                   message,
                   title: '공부방 초대하기',
-                  url: `https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}`,
                   failOnCancel: false,
                 });
               } catch (e) {
@@ -245,23 +244,29 @@ const StudyRoomJoin = () => {
 
               {studyRoom.participants.length > 0 ? (
                 <View style={{gap: 12, flex: 1}}>
-                  {studyRoom.participants.map((participantId, index) => (
-                    <View
-                      key={participantId}
-                      style={{
-                        backgroundColor: theme.card,
-                        borderRadius: 12,
-                        padding: 16,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 12,
-                      }}>
-                      <View style={{flex: 1}}>
-                        <Text style={[typography.body, {color: theme.text, fontWeight: '600', fontSize: toDP(16)}]}>참가자 {index + 1}</Text>
-                        <Text style={[typography.body, {color: theme.secondary, fontSize: toDP(14)}]}>함께 공부하는 멤버</Text>
+                  {studyRoom.participants.map(async (participantId, index) => {
+                    const participantName = await getUserInfo(participantId)
+                      .then(userInfo => userInfo.username)
+                      .catch(() => '알 수 없음');
+
+                    return (
+                      <View
+                        key={participantId}
+                        style={{
+                          backgroundColor: theme.card,
+                          borderRadius: 12,
+                          padding: 16,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 12,
+                        }}>
+                        <View style={{flex: 1}}>
+                          <Text style={[typography.body, {color: theme.text, fontWeight: '600', fontSize: toDP(16)}]}>{participantName}</Text>
+                          <Text style={[typography.body, {color: theme.secondary, fontSize: toDP(14)}]}>함께 공부하는 멤버</Text>
+                        </View>
                       </View>
-                    </View>
-                  ))}
+                    );
+                  })}
                 </View>
               ) : (
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16}}>

@@ -96,7 +96,6 @@ const StudyRoom = () => {
       await Share.open({
         message,
         title: '공부방 초대하기',
-        url: `https://lead.ny64.kr/studyroom/join/?id=${studyRoom.room_id}`,
         failOnCancel: false,
       });
       closeBottomSheet(actionBottomSheetRef);
