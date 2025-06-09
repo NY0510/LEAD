@@ -48,7 +48,7 @@ export const getGoalArr = async (uid: string, week: number): Promise<number[]> =
   let lastValue = await getGoal(uid);
 
   if (goalArr.every(goal => goal === 0)) {
-    return Array(goalArr.length).fill(getGoal(uid));
+    return Array(goalArr.length).fill(await getGoal(uid));
   }
 
   goalArr = goalArr.map(goal => {
