@@ -46,7 +46,7 @@ const DailyStudy = () => {
       setTrueStudyHour(data?.pure_study ?? 0); // pure_study 값 처리
       setExceptionalHour(data?.non_study ?? 0); // non_study 값 처리
       setTotalHour(data?.total ?? 0); // total 값 처리
-      setYesterdayHour(yesterdayData?.pure_study ?? 0); // 어제의 pure_study 값 처리
+      setYesterdayHour(yesterdayData?.total ?? 0);
 
       // totalHour가 null이나 undefined일 경우 10을 설정
       if (!data?.total) {
