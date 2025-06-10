@@ -115,8 +115,14 @@ const WeeklyStudy = () => {
                   barData={stackData.map(item => ({
                     ...item,
                     stacks: item.stacks.map((stack, index) => {
+                      // 공부 이외 시간이 0이면 순 공부시간(첫번째 스택)에 상단 둥근 모서리 적용
+                      const nonStudyValue = item.stacks[1]?.value || 0;
                       if (index === 0) {
-                        return {...stack, borderRadius: 0};
+                        return {
+                          ...stack,
+                          borderTopLeftRadius: nonStudyValue === 0 ? 12 : 0,
+                          borderTopRightRadius: nonStudyValue === 0 ? 12 : 0,
+                        };
                       }
                       return stack;
                     }),
