@@ -4,7 +4,7 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {TimerPicker, TimerPickerRef} from 'react-native-timer-picker';
 import TouchableScale from 'react-native-touchable-scale';
 
-import {getGoal, getMemo, getMyStudyRooms, getStudyToday, setGoal, setMemo} from '@/api';
+import {getGoal, getMemo, getMyStudyRooms, getStudyToday, setGoal, setMemo} from '@/api/apiRouter';
 import Card from '@/components/Card';
 import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
 import Loading from '@/components/Loading';

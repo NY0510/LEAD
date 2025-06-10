@@ -1,4 +1,4 @@
-import {getGoal, getStudyByDateRange} from '@/api';
+import {getGoal, getStudyByDateRange} from '@/api/apiRouter';
 
 const today = new Date();
 const getStartOfWeek = (date: Date) => {
@@ -88,4 +88,3 @@ export const getWeekAvg = async (uid: string, week: number): Promise<number> => 
 
   return Math.round(sum / arrLength);
 };
-

@@ -4,7 +4,7 @@ import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
 import Share from 'react-native-share';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
-import {deleteStudyRoom, getMyStudyRooms, leaveStudyRoom} from '@/api';
+import {deleteStudyRoom, getMyStudyRooms, leaveStudyRoom} from '@/api/apiRouter';
 import Card from '@/components/Card';
 import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
 import FloatingActionButton from '@/components/FloatingActionButton';

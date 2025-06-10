@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Alert, AppState, AppStateStatus, Linking, Text, TouchableOpacity, View} from 'react-native';
 import {Camera, useCameraDevice} from 'react-native-vision-camera';
 
-import {getStudyToday, updateStudy} from '@/api';
+import {getStudyToday, updateStudy} from '@/api/apiRouter';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 import {toDP} from '@/theme/typography';

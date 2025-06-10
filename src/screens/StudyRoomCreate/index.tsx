@@ -2,7 +2,7 @@ import React, {Fragment, useCallback, useRef, useState} from 'react';
 import {Image, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import ImagePicker, {type Image as ImageType, PickerErrorCode} from 'react-native-image-crop-picker';
 
-import {createStudyRoom} from '@/api';
+import {createStudyRoom} from '@/api/apiRouter';
 import {CustomBottomSheet, CustomBottomSheetView} from '@/components/CustomBottomSheet';
 import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';

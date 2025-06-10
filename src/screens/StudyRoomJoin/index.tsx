@@ -6,7 +6,7 @@ import Animated, {Extrapolate, interpolate, useAnimatedStyle} from 'react-native
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Share from 'react-native-share';
 
-import {getMyStudyRooms, getStudyRoom, getUserInfo, joinStudyRoom} from '@/api';
+import {getMyStudyRooms, getStudyRoom, getUserInfo, joinStudyRoom} from '@/api/apiRouter';
 import {CustomBottomSheet, CustomBottomSheetScrollView} from '@/components/CustomBottomSheet';
 import Loading from '@/components/Loading';
 import {useAuth} from '@/contexts/AuthContext';

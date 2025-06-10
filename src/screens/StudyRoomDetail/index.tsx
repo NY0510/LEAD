@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ImageBackground, ScrollView, StyleSheet, Text, View} from 'react-native';
 
-import {getStudyRoom, getStudyToday, getUserInfo} from '@/api';
+import {getStudyRoom, getStudyToday, getUserInfo} from '@/api/apiRouter';
 import Card from '@/components/Card';
 import Loading from '@/components/Loading';
 import {useTheme} from '@/contexts/ThemeContext';

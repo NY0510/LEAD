@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Alert, Text, View} from 'react-native';
 import TouchableScale from 'react-native-touchable-scale';
 
+import {setDemoMode} from '@/api/apiRouter';
 import GoogleSvg from '@/assets/images/google.svg';
 import LogoDarkSvg from '@/assets/images/logo_dark.svg';
 import LogoLightSvg from '@/assets/images/logo_light.svg';
@@ -10,7 +11,7 @@ import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 
 const Login = () => {
-  const {signInWithGoogle} = useAuth();
+  const {signInWithGoogle, signInWithDemo} = useAuth();
   const {theme, typography, isDark} = useTheme();
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +26,29 @@ const Login = () => {
     }
   };
 
+  const handleLongPress = () => {
+    Alert.alert('데모 모드', '데모 모드로 진입하시겠습니까?', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: async () => {
+          setLoading(true);
+          try {
+            setDemoMode(true);
+            await signInWithDemo();
+          } catch (err) {
+            Alert.alert(`데모 모드 진입에 실패했어요.\n${(err as Error).message}`);
+          } finally {
+            setLoading(false);
+          }
+        },
+      },
+    ]);
+  };
+
   if (loading) {
     return <Loading fullScreen />;
   }
@@ -34,7 +58,7 @@ const Login = () => {
       <View />
       <View>{isDark ? <LogoLightSvg /> : <LogoDarkSvg />}</View>
       <View style={{width: '100%'}}>
-        <TouchableScale onPress={handleSignIn} activeScale={0.96} tension={60} friction={3}>
+        <TouchableScale onPress={handleSignIn} onLongPress={handleLongPress} activeScale={0.96} tension={60} friction={3}>
           <View
             style={{
               flexDirection: 'row',

@@ -1,6 +1,9 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
-import {signup} from '@/api';
+import {useDemo} from './DemoContext';
+import {signup} from '@/api/apiRouter';
+import {DEMO_USER} from '@/lib/demoData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
@@ -13,6 +16,7 @@ type Props = {
   user: FirebaseAuthTypes.User | null;
   initializing: boolean;
   signInWithGoogle: () => Promise<FirebaseAuthTypes.User | null>;
+  signInWithDemo: () => Promise<FirebaseAuthTypes.User | null>;
   signOut: () => Promise<void>;
 };
 
@@ -20,6 +24,9 @@ const AuthContext = createContext<Props>({
   user: null,
   initializing: true,
   signInWithGoogle: async () => {
+    return null;
+  },
+  signInWithDemo: async () => {
     return null;
   },
   signOut: async () => {},
@@ -30,6 +37,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({children}: {children: React.ReactNode}) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [initializing, setInitializing] = useState(true);
+  const {isDemoMode, enableDemoMode} = useDemo();
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async firebaseUser => {
@@ -64,12 +72,39 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     }
   };
 
+  const signInWithDemo = async () => {
+    try {
+      // 데모 모드 활성화
+      enableDemoMode();
+
+      // 더미 사용자 객체 생성 (Firebase User 형태로 맞춤)
+      const demoUser = {
+        uid: DEMO_USER.uid,
+        displayName: DEMO_USER.username,
+        email: 'demo@example.com',
+      } as FirebaseAuthTypes.User;
+
+      setUser(demoUser);
+      return demoUser;
+    } catch (error) {
+      console.error(`[AuthProvider] Error signing in with demo: ${error}`);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
-    await GoogleSignin.signOut();
-    await auth().signOut();
+    if (isDemoMode) {
+      // 데모 모드에서는 Firebase 로그아웃 없이 바로 상태만 초기화
+      setUser(null);
+    } else {
+      await GoogleSignin.signOut();
+      await auth().signOut();
+    }
+
+    await AsyncStorage.clear(); // AsyncStorage 초기화
   };
 
   // signOut();
 
-  return <AuthContext.Provider value={{user, initializing, signInWithGoogle, signOut}}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{user, initializing, signInWithGoogle, signInWithDemo, signOut}}>{children}</AuthContext.Provider>;
 };

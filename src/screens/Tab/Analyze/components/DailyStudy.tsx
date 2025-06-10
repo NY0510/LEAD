@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import Chart from './Chart';
-import {getStudyByDate} from '@/api';
+import {getStudyByDate} from '@/api/apiRouter';
 import Loading from '@/components/Loading';
 import {useAuth} from '@/contexts/AuthContext';
 import {useRefresh} from '@/contexts/RefreshContext';
