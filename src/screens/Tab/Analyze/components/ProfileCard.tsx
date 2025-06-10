@@ -30,6 +30,8 @@ const ProfileCard = () => {
 
       setStudiedHour(sumArr(pureStudyData));
       setTotalHour(sumArr(totalStudyData));
+      console.log(weeklyStudiedHour);
+      console.log(weeklyTotalHour);
     } catch (error) {
       console.error('Error fetching profile data:', error);
     } finally {

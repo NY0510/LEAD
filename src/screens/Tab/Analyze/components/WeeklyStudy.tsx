@@ -64,8 +64,8 @@ const WeeklyStudy = () => {
 
   const stackData = pureStudy.map((val, i) => ({
     stacks: [
-      {value: val, color: '#EE902C'},
-      {value: nonStudy[i], color: '#344BFD'},
+      {value: val, color: '#344BFD'},
+      {value: nonStudy[i], color: '#EE902C'},
     ],
     label: ['월', '화', '수', '목', '금', '토', '일'][i],
   }));
