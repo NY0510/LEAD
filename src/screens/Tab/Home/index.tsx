@@ -114,7 +114,7 @@ const Home = () => {
   }, [fetchMemo, fetchStudyRooms, fetchTodayStudyData, user, goalStudyTime]);
 
   // 달성률 계산
-  useEffect(() => setAchievement(goalStudyTime && pureStudyTime ? pureStudyTime / goalStudyTime : 0), [goalStudyTime, pureStudyTime]);
+  useEffect(() => setAchievement(goalStudyTime && totalStudyTime ? totalStudyTime / goalStudyTime : 0), [goalStudyTime, totalStudyTime]);
 
   // 화면이 blur될 때 bottom sheet 닫기
   useEffect(() => {
@@ -172,7 +172,7 @@ const Home = () => {
                   ) : (
                     <View>
                       <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                        <Text style={[{fontSize: toDP(36), color: theme.text}, {fontWeight: '600'}]}>{formatTime(pureStudyTime!)}</Text>
+                        <Text style={[{fontSize: toDP(36), color: theme.text}, {fontWeight: '600'}]}>{formatTime(totalStudyTime!)}</Text>
                         <FontAwesome6 name="pen" size={18} color={theme.secondary} iconStyle="solid" />
                       </View>
                       <Text style={[typography.body, {color: theme.secondary}, {fontWeight: '600'}]}>/ {formatTime(goalStudyTime!)}</Text>
