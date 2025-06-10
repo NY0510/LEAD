@@ -13,10 +13,10 @@ const Loading = ({size = 'large', fullScreen = true}: Props) => {
 
   return fullScreen ? (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={size} color={theme.text} />
+      <ActivityIndicator size={size} color={theme.secondary} />
     </View>
   ) : (
-    <ActivityIndicator size={size} color={theme.text} style={{margin: 8}} />
+    <ActivityIndicator size={size} color={theme.secondary} style={{margin: 8}} />
   );
 };
 

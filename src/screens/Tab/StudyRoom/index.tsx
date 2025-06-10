@@ -160,7 +160,7 @@ const StudyRoom = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView style={{flex: 1, paddingHorizontal: 16}} contentContainerStyle={{flexGrow: filteredStudyRooms.length === 0 ? 1 : 0}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+        <ScrollView style={{flex: 1, paddingHorizontal: 16}} contentContainerStyle={{flexGrow: filteredStudyRooms.length === 0 ? 1 : 0}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.secondary} />}>
           <View style={{gap: 12, flex: 1, justifyContent: 'center', marginBottom: 100}}>
             {loading || refreshing ? (
               <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>

@@ -136,7 +136,7 @@ const Home = () => {
 
   return (
     <Fragment>
-      <ScrollView contentContainerStyle={{padding: 18, paddingTop: 32}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+      <ScrollView contentContainerStyle={{padding: 18, paddingTop: 32}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.secondary} />}>
         <View style={{gap: 22}}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
             <View style={{flexWrap: 'wrap'}}>

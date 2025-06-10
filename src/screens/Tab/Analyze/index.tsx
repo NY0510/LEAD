@@ -21,7 +21,7 @@ const AnalyzeContent = () => {
   }, [triggerRefresh]);
 
   return (
-    <ScrollView contentContainerStyle={{padding: 18}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.inactive} />}>
+    <ScrollView contentContainerStyle={{padding: 18}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.secondary} />}>
       <View style={{gap: 26, width: '100%'}}>
         <ProfileCard />
         <DailyStudy />
