@@ -39,7 +39,7 @@ export const calcAvgPer = (arr1: number[], arr2: number[]): number => {
   const sum = filteredArr.reduce((acc, val) => acc + val, 0);
 
   // 평균이 NaN일 경우 0 반환
-  const avg = sum / filteredArr.length;
+  const avg = Math.round(sum / filteredArr.length);
 
   // 평균이 NaN인 경우 0 반환
   return isNaN(avg) ? 0 : avg;

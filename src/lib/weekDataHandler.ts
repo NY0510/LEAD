@@ -32,14 +32,14 @@ export const getPureStudyArr = async (uid: string, week: number) => {
 
 export const getNonStudyArr = async (uid: string, week: number) => {
   const data: {non_study: number}[] = await getWeekData(uid, week);
-  const pureStudyArr = data.map(non_arr => non_arr.non_study);
-  return pureStudyArr;
+  const pureNonArr = data.map(non_arr => non_arr.non_study);
+  return pureNonArr;
 };
 
 export const getTotalStudyArr = async (uid: string, week: number) => {
-  const data: {total_study: number}[] = await getWeekData(uid, week);
-  const pureStudyArr = data.map(total_arr => total_arr.total_study);
-  return pureStudyArr;
+  const data: {total: number}[] = await getWeekData(uid, week);
+  const totalArr = data.map(total_arr => total_arr.total);
+  return totalArr;
 };
 
 export const getGoalArr = async (uid: string, week: number): Promise<number[]> => {
@@ -74,7 +74,18 @@ export const getWeekRange = (week: number) => {
 
 export const getWeekAvg = async (uid: string, week: number): Promise<number> => {
   const totalStudy = await getTotalStudyArr(uid, week);
-  const arrLength = totalStudy.length;
-  const sum = totalStudy.reduce((acc, val) => acc + val, 0);
-  return sum / arrLength;
+
+  // 배열이 비어있는 경우 0 반환
+  if (totalStudy.length === 0) {
+    return 0;
+  }
+
+  // 배열의 값 중 null, undefined를 0으로 처리
+  const validTotalStudy = totalStudy.map(val => val ?? 0);
+
+  const arrLength = validTotalStudy.length;
+  const sum = validTotalStudy.reduce((acc, val) => acc + val, 0);
+
+  return Math.round(sum / arrLength);
 };
+
