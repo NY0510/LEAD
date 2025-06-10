@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Alert, AppState, AppStateStatus, Linking, Text, TouchableOpacity, View} from 'react-native';
-import KeepAwake from 'react-native-keep-awake';
 import {Camera, useCameraDevice} from 'react-native-vision-camera';
 
 import {getStudyToday, updateStudy} from '@/api';
@@ -8,6 +7,7 @@ import {useAuth} from '@/contexts/AuthContext';
 import {useTheme} from '@/contexts/ThemeContext';
 import {toDP} from '@/theme/typography';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import {activateKeepAwake, deactivateKeepAwake} from '@sayem314/react-native-keep-awake';
 
 // Constants
 const STUDY_CONSTANTS = {
@@ -231,7 +231,7 @@ const Study = () => {
           wasStoppedByBackground.current = true;
         }
 
-        KeepAwake.deactivate();
+        deactivateKeepAwake();
 
         // 타이머들 정리
         if (captureIntervalRef.current) {
@@ -320,7 +320,7 @@ const Study = () => {
       studyStartTime.current = new Date();
 
       resetFocusTracking();
-      KeepAwake.activate();
+      activateKeepAwake();
 
       setTimeout(() => {
         captureAndAnalyzeImage();
@@ -348,7 +348,7 @@ const Study = () => {
       }
       clearTimer();
       if (isStudying) {
-        KeepAwake.deactivate();
+        deactivateKeepAwake();
       }
     };
   }, [isStudying, clearTimer]);
