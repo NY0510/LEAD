@@ -3,6 +3,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useDemo} from './DemoContext';
 import {signup} from '@/api/apiRouter';
 import {DEMO_USER} from '@/lib/demoData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
@@ -99,6 +100,8 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
       await GoogleSignin.signOut();
       await auth().signOut();
     }
+
+    await AsyncStorage.clear(); // AsyncStorage 초기화
   };
 
   // signOut();
