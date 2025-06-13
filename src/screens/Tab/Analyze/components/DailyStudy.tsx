@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import Chart from './Chart';
 import {getStudyByDate} from '@/api/apiRouter';
@@ -31,9 +32,7 @@ const DailyStudy = () => {
   const [yesterdayStudiedHour, setYesterdayHour] = useState<number>(0);
 
   const fetchData = useCallback(async () => {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     setLoading(true);
     try {
@@ -42,50 +41,48 @@ const DailyStudy = () => {
 
       const data = await getStudyByDate(user.uid, dateString);
       const yesterdayData = await getStudyByDate(user.uid, yesterdayString);
-      // null 또는 undefined일 경우 0으로 대체
-      setTrueStudyHour(data?.pure_study ?? 0); // pure_study 값 처리
-      setExceptionalHour(data?.non_study ?? 0); // non_study 값 처리
-      setTotalHour(data?.total ?? 0); // total 값 처리
-      setYesterdayHour(yesterdayData?.total ?? 0);
 
-      // totalHour가 null이나 undefined일 경우 10을 설정
-      if (!data?.total) {
-        setNon(10);
-      } else {
-        setNon(0);
-      }
+      setTrueStudyHour(data?.pure_study ?? 0);
+      setExceptionalHour(data?.non_study ?? 0);
+      setTotalHour(data?.total ?? 0);
+      setYesterdayHour(yesterdayData?.total ?? 0);
+      setNon(!data?.total ? 10 : 0);
     } finally {
       setLoading(false);
     }
   }, [user, startDate, yesterday]);
 
   const onLeftPressed = () => {
-    const newDate = new Date(startDate);
-    newDate.setDate(newDate.getDate() - 1);
-    setStartDate(newDate);
+    setStartDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() - 1);
+      return newDate;
+    });
 
-    const newYesterday = new Date(newDate);
-    newYesterday.setDate(newDate.getDate() - 1);
-    setYesterday(newYesterday);
-
-    fetchData();
+    setYesterday(prev => {
+      const newYesterday = new Date(prev);
+      newYesterday.setDate(prev.getDate() - 1);
+      return newYesterday;
+    });
   };
 
   const onRightPressed = () => {
-    const newDate = new Date(startDate);
-    newDate.setDate(newDate.getDate() + 1);
-    setStartDate(newDate);
+    setStartDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() + 1);
+      return newDate;
+    });
 
-    const newYesterday = new Date(newDate);
-    newYesterday.setDate(newDate.getDate() - 1);
-    setYesterday(newYesterday);
-
-    fetchData();
+    setYesterday(prev => {
+      const newYesterday = new Date(prev);
+      newYesterday.setDate(prev.getDate() - 1);
+      return newYesterday;
+    });
   };
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, refreshTrigger]);
+  }, [fetchData, startDate, refreshTrigger]);
 
   const pieData = [
     {value: trueStudyHour, color: '#344BFD'},
@@ -117,47 +114,79 @@ const DailyStudy = () => {
         </TouchableOpacity>
       </View>
       <View style={{backgroundColor: theme.card, borderRadius: 12, paddingHorizontal: 24, paddingVertical: 18, gap: 8}}>
-        {loading ? (
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Loading fullScreen={false} />
-          </View>
-        ) : (
-          <>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <View>
-                <Text style={[typography.body, {color: theme.text}]}>오늘 공부</Text>
-                <Text style={[typography.title, {color: theme.text}]}>{formatTime(totalHour)}</Text>
-              </View>
-              <View style={{alignItems: 'flex-end'}}>
-                <Text style={[typography.body, {color: theme.text}]}>어제보다</Text>
+        <>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <View>
+              <Text style={[typography.body, {color: theme.text}]}>오늘 공부</Text>
+              {loading ? (
+                <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                  <SkeletonPlaceholder.Item width={30} height={24} marginTop={6} />
+                </SkeletonPlaceholder>
+              ) : (
+                <>
+                  <Text style={[typography.title, {color: theme.text}]}>{formatTime(totalHour)}</Text>
+                </>
+              )}
+            </View>
+            <View style={{alignItems: 'flex-end'}}>
+              <Text style={[typography.body, {color: theme.text}]}>어제보다</Text>
+              {loading ? (
+                <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                  <SkeletonPlaceholder.Item width={30} height={16} marginTop={4} />
+                </SkeletonPlaceholder>
+              ) : (
                 <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{addSign(totalHour - yesterdayStudiedHour)}분</Text>
-              </View>
+              )}
             </View>
-            <Chart chartType="pie" pieData={pieData} />
-            <View style={{gap: 4, marginTop: 16}}>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                  <View style={{width: 15, height: 15, borderColor: '#344BFD', borderWidth: 3, borderRadius: 15 / 2}} />
-                  <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
+          </View>
+          <Chart chartType="pie" pieData={pieData} />
+          <View style={{gap: 4, marginTop: 16}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                <View style={{width: 15, height: 15, borderColor: '#344BFD', borderWidth: 3, borderRadius: 15 / 2}} />
+                <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
+                {loading ? (
+                  <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                    <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                  </SkeletonPlaceholder>
+                ) : (
                   <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(trueStudyHour)}</Text>
+                )}
+                {loading ? (
+                  <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                    <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                  </SkeletonPlaceholder>
+                ) : (
                   <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(totalHour, trueStudyHour)}%</Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-                  <View style={{width: 15, height: 15, borderColor: '#EE902C', borderWidth: 3, borderRadius: 15 / 2}} />
-                  <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(exceptionalHour)}</Text>
-                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(totalHour, exceptionalHour)}%</Text>
-                </View>
+                )}
               </View>
             </View>
-          </>
-        )}
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                <View style={{width: 15, height: 15, borderColor: '#EE902C', borderWidth: 3, borderRadius: 15 / 2}} />
+                <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
+                {loading ? (
+                  <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                    <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                  </SkeletonPlaceholder>
+                ) : (
+                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(exceptionalHour)}</Text>
+                )}
+                {loading ? (
+                  <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                    <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                  </SkeletonPlaceholder>
+                ) : (
+                  <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(totalHour, exceptionalHour)}%</Text>
+                )}
+              </View>
+            </View>
+          </View>
+        </>
       </View>
     </View>
   );

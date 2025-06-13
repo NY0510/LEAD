@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Image, Text, View} from 'react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import FireSvg from '@/assets/images/fire.svg';
 import Loading from '@/components/Loading';
@@ -16,7 +17,7 @@ const ProfileCard = () => {
 
   const [weeklyStudiedHour, setStudiedHour] = useState(0);
   const [weeklyTotalHour, setTotalHour] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // loading 초기 상태를 true로 설정
 
   const fetchData = useCallback(async () => {
     if (!user) {
@@ -24,7 +25,7 @@ const ProfileCard = () => {
     }
 
     try {
-      setLoading(true);
+      setLoading(true); // 로딩 시작
       const pureStudyData = await getPureStudyArr(user.uid, 0);
       const totalStudyData = await getTotalStudyArr(user.uid, 0);
 
@@ -33,7 +34,7 @@ const ProfileCard = () => {
     } catch (error) {
       console.error('Error fetching profile data:', error);
     } finally {
-      setLoading(false);
+      setLoading(false); // 로딩 종료
     }
   }, [user]);
 
@@ -41,18 +42,18 @@ const ProfileCard = () => {
     fetchData();
   }, [fetchData, refreshTrigger]);
 
-  // 주간 평균 집중도 계산
   const weeklyConcentration = weeklyTotalHour > 0 ? calcPer(weeklyTotalHour, weeklyStudiedHour) : 0;
 
   return (
     <View style={{backgroundColor: theme.card, borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12}}>
+      <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
       {loading ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Loading fullScreen={false} />
-        </View>
+        <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+          <SkeletonPlaceholder.Item width={45} height={20} />
+          <SkeletonPlaceholder.Item width={160} height={20} marginTop={6} />
+        </SkeletonPlaceholder>
       ) : (
         <>
-          <Image source={require('@/assets/images/rock.png')} style={{width: 64, height: 64}} />
           <View style={{flexShrink: 1}}>
             <Text style={[typography.subtitle, {color: theme.text, fontWeight: 600}]}>{user?.displayName}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>

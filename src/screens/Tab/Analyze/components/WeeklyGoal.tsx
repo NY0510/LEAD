@@ -34,8 +34,7 @@ const WeeklyGoal = () => {
       const goalData = await getGoalArr(user.uid, week);
       const privGoalData = await getGoalArr(user.uid, week - 1);
 
-      // 각 배열 항목에 대해 null 또는 undefined를 0으로 처리
-      setTotalStudy(totalStudyData.map(item => item ?? 0)); // 배열의 각 항목 처리
+      setTotalStudy(totalStudyData.map(item => item ?? 0));
       setPrivTotalStudy(privTotalStudyData.map(item => item ?? 0));
       setGoal(goalData.map(item => item ?? 0));
       setPrivGoal(privGoalData.map(item => item ?? 0));
@@ -48,38 +47,33 @@ const WeeklyGoal = () => {
 
   const onLeftPressed = () => {
     setWeek(week - 1);
-    fetchData();
   };
   const onRightPressed = () => {
     setWeek(week + 1);
-    fetchData();
   };
 
   const weeklyGoalData = totalStudy.map((val, i) => {
     if (val === 0) {
       return {
-        stacks: [
-          {value: goal[i], color: '#C6CED1'}, // 총 공부 시간이 0이면 goal만 표시
-        ],
+        stacks: [{value: goal[i], color: '#C6CED1'}],
         label: ['월', '화', '수', '목', '금', '토', '일'][i],
       };
     }
 
     return {
       stacks: [
-        {value: val, color: '#FF7171'}, // 공부 시간은 빨간색
-        {value: Math.max(goal[i] - val, 0), color: '#C6CED1'}, // 목표와의 차이를 회색으로
+        {value: val, color: '#FF7171'},
+        {value: Math.max(goal[i] - val, 0), color: '#C6CED1'},
       ],
       label: ['월', '화', '수', '목', '금', '토', '일'][i],
     };
   });
 
-  // totalStudy와 goal이 모두 0 또는 NaN인 경우를 확인하는 조건
   const isDataEmptyOrInvalid = totalStudy.every(val => val === 0 || isNaN(val)) && goal.every(val => val === 0 || isNaN(val));
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, refreshTrigger]);
+  }, [fetchData, week, refreshTrigger]);
 
   return (
     <View style={{gap: 12}}>
@@ -112,19 +106,15 @@ const WeeklyGoal = () => {
                 <Text style={[typography.body, {color: '#ff7171', fontWeight: 500}]}>{addSign(calcAvgPer(totalStudy, goal) - calcAvgPer(privTotalStudy, privGoal)) + '%'}</Text>
               </View>
             </View>
-
-            {/* 삼항 연산자를 사용해 데이터가 비었거나 유효하지 않으면 다른 내용을 렌더링 */}
             {isDataEmptyOrInvalid ? (
-              <Text style={{color: theme.text}}>데이터가 없습니다</Text> // 데이터가 없을 때 보여줄 메시지
+              <Text style={{color: theme.text}}>데이터가 없습니다</Text>
             ) : (
               <Chart
                 chartType="bar"
                 barData={weeklyGoalData.map(item => ({
                   ...item,
                   stacks: item.stacks.map((stack, index) => {
-                    // 첫 번째 stack (공부 시간)만 처리
                     if (index === 0) {
-                      // 두 번째 stack (목표 미달)이 존재할 때만 borderRadius를 변경
                       if (item.stacks.length > 1 && item.stacks[1].value) {
                         return {...stack, borderRadius: 0};
                       }

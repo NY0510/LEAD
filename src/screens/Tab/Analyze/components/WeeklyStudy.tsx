@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import Chart from './Chart';
 import Loading from '@/components/Loading';
@@ -50,17 +51,16 @@ const WeeklyStudy = () => {
   }, [user, week]);
 
   const onLeftPressed = () => {
-    setWeek(week - 1);
-    fetchData();
+    setWeek(prevWeek => prevWeek - 1);
   };
+
   const onRightPressed = () => {
-    setWeek(week + 1);
-    fetchData();
+    setWeek(prevWeek => prevWeek + 1);
   };
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, refreshTrigger]);
+  }, [fetchData, week, refreshTrigger]);
 
   const stackData = pureStudy.map((val, i) => ({
     stacks: [
@@ -70,7 +70,6 @@ const WeeklyStudy = () => {
     label: ['월', '화', '수', '목', '금', '토', '일'][i],
   }));
 
-  // 데이터가 0 또는 NaN이면 처리할 조건 추가
   const isDataEmptyOrInvalid = pureStudy.every(val => val === 0 || isNaN(val)) && nonStudy.every(val => val === 0 || isNaN(val));
 
   return (
@@ -104,10 +103,8 @@ const WeeklyStudy = () => {
                 <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{formatTime(weekAvg - privWeekAvg)}</Text>
               </View>
             </View>
-
-            {/* 삼항 연산자 사용하여 데이터가 없으면 다른 UI를 렌더링 */}
             {isDataEmptyOrInvalid ? (
-              <Text style={{color: theme.text}}>데이터가 없습니다</Text> // 데이터가 없을 때 표시할 메시지
+              <Text style={{color: theme.text}}>데이터가 없습니다</Text>
             ) : (
               <>
                 <Chart
@@ -115,7 +112,6 @@ const WeeklyStudy = () => {
                   barData={stackData.map(item => ({
                     ...item,
                     stacks: item.stacks.map((stack, index) => {
-                      // 공부 이외 시간이 0이면 순 공부시간(첫번째 스택)에 상단 둥근 모서리 적용
                       const nonStudyValue = item.stacks[1]?.value || 0;
                       if (index === 0) {
                         return {
@@ -135,8 +131,20 @@ const WeeklyStudy = () => {
                       <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>순 공부시간</Text>
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-                      <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{formatTime(sumArr(pureStudy))}</Text>
-                      <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{calcPer(sumArr(totalStudy), sumArr(pureStudy)) + '%'}</Text>
+                      {loading ? (
+                        <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                          <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                        </SkeletonPlaceholder>
+                      ) : (
+                        <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{formatTime(sumArr(pureStudy))}</Text>
+                      )}
+                      {loading ? (
+                        <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                          <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                        </SkeletonPlaceholder>
+                      ) : (
+                        <Text style={[typography.body, {color: theme.text, fontWeight: '400'}]}>{calcPer(sumArr(totalStudy), sumArr(pureStudy)) + '%'}</Text>
+                      )}
                     </View>
                   </View>
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -145,8 +153,20 @@ const WeeklyStudy = () => {
                       <Text style={[typography.body, {color: theme.secondary, fontWeight: 600}]}>공부 이외 시간</Text>
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
-                      <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(sumArr(nonStudy))}</Text>
-                      <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(sumArr(totalStudy), sumArr(nonStudy)) + '%'}</Text>
+                      {loading ? (
+                        <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                          <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                        </SkeletonPlaceholder>
+                      ) : (
+                        <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{formatTime(sumArr(nonStudy))}</Text>
+                      )}
+                      {loading ? (
+                        <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
+                          <SkeletonPlaceholder.Item width={22} height={16} marginTop={0} />
+                        </SkeletonPlaceholder>
+                      ) : (
+                        <Text style={[typography.body, {color: theme.text, fontWeight: 400}]}>{calcPer(sumArr(totalStudy), sumArr(nonStudy)) + '%'}</Text>
+                      )}
                     </View>
                   </View>
                 </View>

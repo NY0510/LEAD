@@ -75,12 +75,9 @@ export const getWeekRange = (week: number) => {
 export const getWeekAvg = async (uid: string, week: number): Promise<number> => {
   const totalStudy = await getTotalStudyArr(uid, week);
 
-  // 배열이 비어있는 경우 0 반환
   if (totalStudy.length === 0) {
     return 0;
   }
-
-  // 배열의 값 중 null, undefined를 0으로 처리
   const validTotalStudy = totalStudy.map(val => val ?? 0);
 
   const arrLength = validTotalStudy.length;
