@@ -135,7 +135,9 @@ const DailyStudy = () => {
                   <SkeletonPlaceholder.Item width={30} height={16} marginTop={4} />
                 </SkeletonPlaceholder>
               ) : (
-                <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{addSign(totalHour - yesterdayStudiedHour)}분</Text>
+                <>
+                  <Text style={[typography.body, {color: theme.primary, fontWeight: 500}]}>{addSign(totalHour - yesterdayStudiedHour)}분</Text>
+                </>
               )}
             </View>
           </View>

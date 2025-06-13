@@ -13,7 +13,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 
-const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const StudyRoomCreate = () => {
   const rootStackNavigation = useNavigation<NavigationProp<RootStackParamList>>();

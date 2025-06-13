@@ -151,7 +151,7 @@ const Home = () => {
               <View style={[{borderLeftWidth: 15, borderRightWidth: 15, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', position: 'absolute', top: -20, right: 20}, {borderBottomColor: theme.card}]} />
               {memoLoading || refreshing ? (
                 <SkeletonPlaceholder borderRadius={8} backgroundColor={theme.inactive} highlightColor={theme.background}>
-                  <SkeletonPlaceholder.Item width={300} height={20} />
+                  <SkeletonPlaceholder.Item width={270} height={20} />
                 </SkeletonPlaceholder>
               ) : (
                 <Text style={[typography.subtitle, {color: theme.secondary}, {fontWeight: '600', flexShrink: 1}]}>{memoState || '오늘의 목표나 메모를 적어보세요!'}</Text>
